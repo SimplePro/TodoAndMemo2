@@ -144,6 +144,11 @@ class MainActivity : AppCompatActivity(), TodoRecyclerViewAdapter.todoItemClickL
         }
         navigationView.setNavigationItemSelectedListener(this)
 
+        if(FirebaseAuth.getInstance().currentUser != null)
+        {
+
+        }
+
 
         //추가 버튼이 클릭되었을 때.
         addButton.setOnClickListener {

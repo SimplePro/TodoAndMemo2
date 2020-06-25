@@ -8,6 +8,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.FirebaseFirestore
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -17,6 +20,8 @@ class TodoRecyclerViewAdapter(val todoList: ArrayList<TodoForm>, val DoneTodoLis
 //    var todoSearchList : ArrayList<TodoForm>
 
     lateinit var context : Context
+
+    lateinit var DoneTodoDocRef : DocumentReference
 
     init {
         todoSearchList = todoList
@@ -52,6 +57,13 @@ class TodoRecyclerViewAdapter(val todoList: ArrayList<TodoForm>, val DoneTodoLis
                     if(todoList[i].todoId == todoSearchList[adapterPosition].todoId)
                     {
                         DoneTodoList.add(todoList[i])
+                        if(FirebaseAuth.getInstance().currentUser != null)
+                        {
+                            DoneTodoDocRef = FirebaseFirestore.getInstance().collection("users").document(FirebaseAuth.getInstance().currentUser!!.uid)
+                            DoneTodoDocRef.collection("DoneTodo").document(todoList[i].todoId).set(todoList[i]).addOnCompleteListener {
+                                Log.d("TAG", "DoneTodoDocRef success")
+                            }
+                        }
                         Log.d("TAG", "DoneTodoList[0] = ${DoneTodoList[0].todo} ${DoneTodoList[0].content} ${DoneTodoList[0].todoId}")
                     }
                 }
