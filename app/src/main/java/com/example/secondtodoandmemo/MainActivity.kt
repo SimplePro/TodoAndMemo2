@@ -1095,6 +1095,10 @@ class MainActivity : AppCompatActivity(), TodoRecyclerViewAdapter.todoItemClickL
                 startActivity(intent)
                 finish()
             }
+
+            R.id.secession -> {
+//                val intent = Intent(this, )
+            }
         }
         layout_drawer.closeDrawers()
         return false
