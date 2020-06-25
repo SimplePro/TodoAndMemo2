@@ -1,5 +1,6 @@
 package com.example.secondtodoandmemo
 
+import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -557,6 +558,13 @@ class MainActivity : AppCompatActivity(), TodoRecyclerViewAdapter.todoItemClickL
                 if(todoList[i].todoId == todoId)
                 {
                     todoList.set(i, TodoForm(todoText.text.toString(), contentText.text.toString(), todoList[i].todoId))
+                    if(FirebaseAuth.getInstance().currentUser != null)
+                    {
+                        todoDocRef = FirebaseFirestore.getInstance().collection("users").document(FirebaseAuth.getInstance().currentUser!!.uid).collection("todo").document(todoId)
+                        todoDocRef.set((TodoForm(todoText.text.toString(), contentText.text.toString(), todoList[i].todoId))).addOnCompleteListener {
+                            Log.d("TAG", "todoList replace success")
+                        }
+                    }
                     todoSearchView.setQuery("", false)
                     todoSearchView.clearFocus()
                 }
@@ -641,6 +649,13 @@ class MainActivity : AppCompatActivity(), TodoRecyclerViewAdapter.todoItemClickL
                 if(memoList[i].memoId == memoId)
                 {
                     memoList.set(i, MemoForm(memoTitleTextDialog.text.toString(), memoContentTextDialog.text.toString(), date_text, "${memoPlanText}", memoList[i].memoId))
+                    if(FirebaseAuth.getInstance().currentUser != null)
+                    {
+                        memoDocRef = FirebaseFirestore.getInstance().collection("users").document(FirebaseAuth.getInstance().currentUser!!.uid).collection("memo").document(memoId)
+                        memoDocRef.set((MemoForm(memoTitleTextDialog.text.toString(), memoContentTextDialog.text.toString(), date_text, memoPlanText, memoList[i].memoId))).addOnCompleteListener {task ->
+                            Log.d("TAG", "memoList replace success")
+                        }
+                    }
                     memoSearchView.setQuery("", false)
                     memoSearchView.clearFocus()
                 }
