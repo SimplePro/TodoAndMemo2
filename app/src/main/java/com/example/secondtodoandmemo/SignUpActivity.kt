@@ -69,15 +69,24 @@ class SignUpActivity : AppCompatActivity() {
     }
 
     private fun moveNextPage() {
+        val email = emailEditTextSignUp.text.toString()
+        val password = passwordEditTextSignUp.text.toString()
         val id = idEditTextSignUp.text.toString()
 
         if(FirebaseAuth.getInstance().currentUser != null)
         {
+            val emailData = mapOf("email" to email)
+            val passwordData = mapOf("password" to password)
             val idData = mapOf("id" to id)
 
             authUid = FirebaseAuth.getInstance().currentUser!!.uid
             docRef = FirebaseFirestore.getInstance().collection("users").document(authUid)
-            docRef.set(idData)
+            docRef.set(emailData, SetOptions.merge())
+            docRef.set(passwordData, SetOptions.merge())
+            docRef.set(idData, SetOptions.merge())
+
+            docRef.collection("memo")
+            docRef.collection("todo")
 //            docRef.set(idData, SetOptions.merge())
         }
 
