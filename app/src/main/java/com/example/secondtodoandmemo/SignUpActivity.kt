@@ -85,8 +85,7 @@ class SignUpActivity : AppCompatActivity() {
             docRef.set(passwordData, SetOptions.merge())
             docRef.set(idData, SetOptions.merge())
 
-            docRef.collection("memo")
-            docRef.collection("todo")
+            docRef.collection("todo").document()
 //            docRef.set(idData, SetOptions.merge())
         }
 
