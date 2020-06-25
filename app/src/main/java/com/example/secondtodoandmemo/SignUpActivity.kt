@@ -1,4 +1,4 @@
-package com.example.todoandmemo
+package com.example.secondtodoandmemo
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -7,10 +7,18 @@ import android.util.Log
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
+import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.SetOptions
 import kotlinx.android.synthetic.main.activity_sign_up.*
 
 class SignUpActivity : AppCompatActivity() {
+
+    lateinit var authUid : String
+
+    lateinit var docRef : DocumentReference
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sign_up)
@@ -35,6 +43,18 @@ class SignUpActivity : AppCompatActivity() {
     private fun createEmailId() {
         val email = emailEditTextSignUp.text.toString()
         val password = passwordEditTextSignUp.text.toString()
+//        val id = idEditTextSignUp.text.toString()
+
+//        if(FirebaseAuth.getInstance().currentUser != null)
+//        {
+////            val idData = hashMapOf("id" to id)
+//
+//            val idData = mapOf("id" to id)
+//
+//            authUid = FirebaseAuth.getInstance().currentUser!!.uid
+//            docRef = FirebaseFirestore.getInstance().collection("users").document(authUid)
+//            docRef.set(idData, SetOptions.merge())
+//        }
 
         FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password).addOnCompleteListener {
             if(it.isSuccessful)
@@ -49,10 +69,22 @@ class SignUpActivity : AppCompatActivity() {
     }
 
     private fun moveNextPage() {
+        val id = idEditTextSignUp.text.toString()
+
+        if(FirebaseAuth.getInstance().currentUser != null)
+        {
+            val idData = mapOf("id" to id)
+
+            authUid = FirebaseAuth.getInstance().currentUser!!.uid
+            docRef = FirebaseFirestore.getInstance().collection("users").document(authUid)
+            docRef.set(idData)
+//            docRef.set(idData, SetOptions.merge())
+        }
+
         var currentUser = FirebaseAuth.getInstance().currentUser
         if(currentUser != null)
         {
-            startActivity(Intent(this, MainActivity::class.java))
+            startActivity(Intent(this, LoginActivity::class.java))
             finish()
         }
     }

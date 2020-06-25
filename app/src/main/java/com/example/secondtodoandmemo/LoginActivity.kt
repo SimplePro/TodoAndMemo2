@@ -5,9 +5,10 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
-import com.example.todoandmemo.SignUpActivity
+import com.example.secondtodoandmemo.SignUpActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activity_login.*
 
 class LoginActivity : AppCompatActivity() {
@@ -50,27 +51,27 @@ class LoginActivity : AppCompatActivity() {
 
     private fun moveNextPage() {
 
-//        Log.d("TAG", "uid is ${FirebaseAuth.getInstance().uid}")
-//        if(FirebaseAuth.getInstance().currentUser != null)
-//        {
-//            authUid = FirebaseAuth.getInstance().currentUser!!.uid
-//            docRef = FirebaseFirestore.getInstance().collection("users").document(authUid)
-//            docRef.get()
-//                .addOnCompleteListener { task ->
-//                    if(task.isSuccessful)
-//                    {
-//                        Log.d("TAG", "exist")
-//                        val result = task.result?.getString("hello")
-//                        Toast.makeText(applicationContext, result, Toast.LENGTH_LONG).show()
-//                    }
-//                    else {
-//                        Log.d("TAG", "no exist No such document")
-//                    }
-//                }
-//                .addOnFailureListener {Exception ->
-//                    Log.d("TAG", "error is $Exception")
-//                }
-//        }
+        Log.d("TAG", "uid is ${FirebaseAuth.getInstance().uid}")
+        if(FirebaseAuth.getInstance().currentUser != null)
+        {
+            authUid = FirebaseAuth.getInstance().currentUser!!.uid
+            docRef = FirebaseFirestore.getInstance().collection("users").document(authUid)
+            docRef.get()
+                .addOnCompleteListener { task ->
+                    if(task.isSuccessful)
+                    {
+                        Log.d("TAG", "exist")
+                        val result = task.result?.getString("id")
+                        Toast.makeText(applicationContext, result + "님 환영합니다", Toast.LENGTH_LONG).show()
+                    }
+                    else {
+                        Log.d("TAG", "no exist No such document")
+                    }
+                }
+                .addOnFailureListener {Exception ->
+                    Log.d("TAG", "error is $Exception")
+                }
+        }
         var currentUser = FirebaseAuth.getInstance().currentUser
         if(currentUser != null)
         {
