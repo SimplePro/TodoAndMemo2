@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="370dp"
+    android:layout_height="550dp"
+    android:layout_gravity="center"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/memoListLayoutDialog"
+        android:background="@drawable/todo_add_dialog_background"
+        android:layout_width="370dp"
+        android:layout_height="550dp"
+        android:layout_centerInParent="true"
+        >
+
+        <ImageView
+            android:layout_width="250dp"
+            android:layout_height="250dp"
+            android:src="@drawable/memo_icon3"
+            android:tint="#99ffffff"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"/>
+
+        <LinearLayout
+            android:layout_marginTop="20dp"
+            android:id="@+id/memoTitleLayoutDialog"
+            android:layout_marginHorizontal="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="제목 :"
+                android:textStyle="bold"
+                android:textColor="@android:color/black"
+                android:fontFamily="@font/mapo"
+                android:textSize="20dp"/>
+
+            <EditText
+                android:id="@+id/memoTitleEditTextDialog"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="2dp"
+                android:fontFamily="@font/mapo"
+                android:hint="제목 / 15자"
+                android:maxLength="15"
+                android:maxLines="1"
+                android:textColor="@android:color/black"
+                android:textColorHint="@android:color/black"
+                android:textStyle="bold"
+                android:theme="@style/EditTheme" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/memoListContentLayoutDialog"
+            app:layout_constraintTop_toBottomOf="@id/memoTitleLayoutDialog"
+            android:layout_marginHorizontal="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="내용 :"
+                android:textStyle="bold"
+                android:fontFamily="@font/mapo"
+                android:textSize="20dp"
+                android:textColor="@android:color/black"
+                />
+
+            <EditText
+                android:id="@+id/memoContentEditTextDialog"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="2dp"
+                android:hint="내용/ 500자"
+                android:maxLines="12"
+                android:maxLength="500"
+                android:fontFamily="@font/mapo"
+                android:textColor="@android:color/black"
+                android:textColorHint="@android:color/black"
+                android:theme="@style/EditTheme"
+                android:textStyle="bold"
+                />
+
+        </LinearLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/memoSaveLayoutDialog"
+            android:layout_width="150dp"
+            android:layout_height="80dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:layout_marginBottom="60dp"
+            android:elevation="10dp"
+            app:layout_constraintRight_toLeftOf="@id/memoCancelLayoutDialog"
+            android:background="@drawable/todo_button_dialog">
+
+            <Button
+                android:id="@+id/memoSaveButtonDialog"
+                android:background="#00ffffff"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="저장"
+                android:textStyle="bold"
+                android:textColor="@android:color/black"
+                android:textSize="25dp"
+                android:fontFamily="@font/mapo"/>
+
+            <ImageView
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:padding="4dp"
+                android:src="@drawable/memo_icon"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                android:layout_marginTop="5dp"
+                android:layout_marginLeft="5dp"
+                />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/memoCancelLayoutDialog"
+            android:layout_width="150dp"
+            android:layout_height="80dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toRightOf="@id/memoSaveLayoutDialog"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_marginBottom="60dp"
+            android:elevation="10dp"
+            android:background="@drawable/todo_button_dialog">
+
+            <Button
+                android:id="@+id/memoCancelButtonDialog"
+                android:background="#00ffffff"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="취소"
+                android:textStyle="bold"
+                android:textColor="@android:color/black"
+                android:textSize="25dp"
+                android:fontFamily="@font/mapo"/>
+
+            <ImageView
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:src="@drawable/cancel_icon"
+                android:tint="#45ffffff"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                android:layout_marginLeft="5dp"
+                android:padding="2dp"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <TextView
+            android:id="@+id/memoListPlanTextViewDialog"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="무슨 계획을 한 후에 쓰는 메모인가요? (선택)"
+            android:fontFamily="@font/mapo"
+            android:textColor="#5E5E5E"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/memoListContentLayoutDialog"
+            android:layout_marginTop="5dp"
+            android:layout_marginRight="20dp"
+            android:textStyle="bold"
+            />
+
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:visibility="gone"
+        android:id="@+id/memoPlanLayoutDialog"
+        android:layout_width="370dp"
+        android:layout_height="550dp">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:overScrollMode="never"
+            android:layout_marginTop="70dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/memoPlanRecyclerViewDialog"
+            />
+
+        <ImageView
+            android:id="@+id/memoPlanCancelImageViewDialog"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/cancel_icon"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="5dp"
+            android:layout_marginRight="5dp"
+            />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</RelativeLayout>

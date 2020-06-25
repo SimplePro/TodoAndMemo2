@@ -1,4 +1,4 @@
-package com.example.todoandmemo2
+package com.example.secondtodoandmemo
 
 import org.junit.Test
 

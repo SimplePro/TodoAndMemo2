@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="center"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:background="@drawable/todo_add_dialog_background"
+        android:layout_width="370dp"
+        android:layout_height="450dp"
+        android:layout_centerInParent="true"
+        >
+
+        <ImageView
+            android:layout_width="250dp"
+            android:layout_height="250dp"
+            android:src="@drawable/calendar_icon"
+            android:tint="#99ffffff"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            />
+
+        <LinearLayout
+            android:id="@+id/todoLinearLayoutDialog"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginTop="30dp"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_editor_absoluteX="10dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/mapo"
+                android:text="할 일 :"
+                android:textStyle="bold"
+                android:textColor="@android:color/black"
+                android:textSize="20dp"
+                />
+
+            <EditText
+                android:textStyle="bold"
+                android:layout_marginLeft="2dp"
+                android:id="@+id/todoEditTextDialog"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/mapo"
+                android:hint="todo / 8자"
+                android:maxLength="8"
+                android:textColorHint="@android:color/black"
+                android:theme="@style/EditTheme"
+                android:maxLines="1"
+                />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/contentLinearLayoutDialog"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toBottomOf="@id/todoLinearLayoutDialog"
+            app:layout_editor_absoluteX="10dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/mapo"
+                android:text="상세 :"
+                android:textStyle="bold"
+                android:textColor="@android:color/black"
+                android:textSize="20dp"
+                />
+
+            <EditText
+                android:textStyle="bold"
+                android:layout_marginLeft="2dp"
+                android:id="@+id/contentEditTextDialog"
+                android:theme="@style/EditTheme"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="상세 / 50자"
+                android:textColorHint="@android:color/black"
+                android:maxLength="50"
+                android:maxLines="8"
+                android:fontFamily="@font/mapo"/>
+
+        </LinearLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/todoSaveLinearLayoutDialog"
+            android:layout_width="150dp"
+            android:layout_height="80dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@id/todoCancelLinearLayoutDialog"
+            android:layout_marginBottom="60dp"
+            android:elevation="10dp"
+            android:background="@drawable/todo_button_dialog"
+            >
+
+
+            <Button
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:background="#00ffffff"
+                android:id="@+id/todoButtonDialog"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fontFamily="@font/mapo"
+                android:text="저장"
+                android:textSize="25dp"
+                android:textColor="@android:color/black"
+                android:textStyle="bold"
+                />
+
+
+            <ImageView
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="10dp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:src="@drawable/todo_icon"
+                android:tint="#43FFFFFF"
+                />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/todoCancelLinearLayoutDialog"
+            android:layout_width="150dp"
+            android:layout_height="80dp"
+            android:background="@drawable/todo_button_dialog"
+            app:layout_constraintBottom_toBottomOf="@id/todoSaveLinearLayoutDialog"
+            app:layout_constraintLeft_toRightOf="@id/todoSaveLinearLayoutDialog"
+            app:layout_constraintRight_toRightOf="parent"
+            android:elevation="10dp"
+            >
+
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="취소"
+            android:id="@+id/CancelTodoButtonDialog"
+            android:textStyle="bold"
+            android:fontFamily="@font/mapo"
+            android:textSize="25dp"
+            android:background="#00ffffff"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            />
+
+            <ImageView
+                android:padding="4dp"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:src="@drawable/cancel_icon"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                android:layout_marginLeft="20dp"
+                android:tint="#4DFFFFFF"
+                />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</RelativeLayout>
