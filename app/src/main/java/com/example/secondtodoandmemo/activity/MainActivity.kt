@@ -112,6 +112,8 @@ class MainActivity : AppCompatActivity(),
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+
+
         //변수 정의
         lottieAnimationAlphaAnimation = AnimationUtils.loadAnimation(this,
             R.anim.lottie_animation_alpha_animation
@@ -149,6 +151,19 @@ class MainActivity : AppCompatActivity(),
             )
 
 
+        //todoRecyclerView adapter 연결 & RecyclerView 세팅
+        todoRecyclerView.apply{
+            adapter = todoAdapter
+            layoutManager = LinearLayoutManager(this@MainActivity, LinearLayoutManager.VERTICAL, false)
+            setHasFixedSize(true)
+        }
+
+        //memoRecyclerView adapter 연결 & RecyclerView 세팅
+        memoRecyclerView.apply {
+            adapter = memoAdapter
+            layoutManager = LinearLayoutManager(this@MainActivity, LinearLayoutManager.VERTICAL, false)
+            setHasFixedSize(true)
+        }
 
         //onCreate 되었을 때 Firebase 에서 데이터를 가져오는 것.
         if(FirebaseAuth.getInstance().currentUser != null)
@@ -175,6 +190,12 @@ class MainActivity : AppCompatActivity(),
                                 todoLottieAnimationVisibleForm = false
                             }, 500)
                         }
+                        if(todoList.isNotEmpty())
+                        {
+                            todoAdapter.notifyDataSetChanged()
+                            todoRecyclerView.startAnimation(startLottieAnimationAlphaAnimation)
+                            todoRecyclerView.visibility = View.VISIBLE
+                        }
                     }
                 }
                 .addOnFailureListener {exception ->
@@ -198,6 +219,12 @@ class MainActivity : AppCompatActivity(),
                                 memoLottieAnimationVisibleForm = false
                             }, 500)
                         }
+                        if(memoList.isNotEmpty())
+                        {
+                            memoAdapter.notifyDataSetChanged()
+                            memoRecyclerView.startAnimation(startLottieAnimationAlphaAnimation)
+                            memoRecyclerView.visibility = View.VISIBLE
+                        }
                     }
                 }
                 .addOnFailureListener { exception ->
@@ -216,9 +243,6 @@ class MainActivity : AppCompatActivity(),
                 .addOnFailureListener { exception ->
                     Log.d("TAG", "던투두리스트 데이터 불러오기 실패 $exception")
                 }
-
-            todoAdapter.notifyDataSetChanged()
-            memoAdapter.notifyDataSetChanged()
         }
 
         //만일 todoList 의 사이즈가 1이면 GONE 으로 되는 todoLottieAnimationVisibleForm 을 true 로 바꾸어 LottieAnimationView 를 GONE 형태로 바꾸어 줘야함.
@@ -486,20 +510,6 @@ class MainActivity : AppCompatActivity(),
             }
 
         })
-
-        //todoRecyclerView adapter 연결 & RecyclerView 세팅
-        todoRecyclerView.apply{
-            adapter = todoAdapter
-            layoutManager = LinearLayoutManager(this@MainActivity, LinearLayoutManager.VERTICAL, false)
-            setHasFixedSize(true)
-        }
-
-        //memoRecyclerView adapter 연결 & RecyclerView 세팅
-        memoRecyclerView.apply {
-            adapter = memoAdapter
-            layoutManager = LinearLayoutManager(this@MainActivity, LinearLayoutManager.VERTICAL, false)
-            setHasFixedSize(true)
-        }
 
 
     }
