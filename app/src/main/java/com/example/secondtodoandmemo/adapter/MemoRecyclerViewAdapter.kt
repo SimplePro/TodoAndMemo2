@@ -1,4 +1,4 @@
-package com.example.secondtodoandmemo
+package com.example.secondtodoandmemo.adapter
 
 import android.content.Context
 import android.preference.PreferenceManager
@@ -7,13 +7,16 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
+import com.example.secondtodoandmemo.Instance.MemoForm
+import com.example.secondtodoandmemo.R
 import java.util.*
 import kotlin.collections.ArrayList
 
 //todoList까지 받는 이유 : todoList를 Dialog 안에 있는 RecyclerView의 아이템으로 쓰기 위해서이다. 나중에 서버쪽을 작업하게 됬을 때 todoList를 다른 ArrayList형 변수로 바꿔줘야 한다.
 class MemoRecyclerViewAdapter (private var memoList: ArrayList<MemoForm>,
                                var memoSearchList: ArrayList<MemoForm>,
-                               private var clickListener : memoItemClickListener): RecyclerView.Adapter<MemoRecyclerViewAdapter.CustomViewHolder>(), Filterable{
+                               private var clickListener : memoItemClickListener
+): RecyclerView.Adapter<MemoRecyclerViewAdapter.CustomViewHolder>(), Filterable{
 
 //    var memoSearchList : ArrayList<MemoForm>
 

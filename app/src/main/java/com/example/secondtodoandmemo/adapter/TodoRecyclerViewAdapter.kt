@@ -1,4 +1,4 @@
-package com.example.secondtodoandmemo
+package com.example.secondtodoandmemo.adapter
 
 import android.content.Context
 import android.preference.PreferenceManager
@@ -8,6 +8,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
+import com.example.secondtodoandmemo.Instance.TodoForm
+import com.example.secondtodoandmemo.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
@@ -39,7 +41,9 @@ class TodoRecyclerViewAdapter(val todoList: ArrayList<TodoForm>, val DoneTodoLis
         context = parent.context
 
         val view = LayoutInflater.from(parent.context).inflate(R.layout.todo_list_item, parent, false)
-        return CustomViewHolder(view).apply {
+        return CustomViewHolder(
+            view
+        ).apply {
 
             //todoItem 의 replace 버튼이 클릭 되었을 때
             replaceButton.setOnClickListener {

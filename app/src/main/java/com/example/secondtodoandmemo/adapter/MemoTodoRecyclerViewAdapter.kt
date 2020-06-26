@@ -1,4 +1,4 @@
-package com.example.secondtodoandmemo
+package com.example.secondtodoandmemo.adapter
 
 import android.content.Context
 import android.preference.PreferenceManager
@@ -7,6 +7,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
+import com.example.secondtodoandmemo.Instance.TodoForm
+import com.example.secondtodoandmemo.R
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 //새로운 다른 itemLayout을 만들었다. (MemoRecyclerView 안에서 Dialog 쪽에서 사용됨. Dialog 안에 있는 RecyclerView의 아이디는 memoPlanRecyclerViewDialog이다.)
 class MemoTodoRecyclerViewAdapter(val todoList: ArrayList<TodoForm>, val context: Context, private val DoneTodoListListener: memoItemViewOnClickListener)
@@ -20,7 +24,9 @@ class MemoTodoRecyclerViewAdapter(val todoList: ArrayList<TodoForm>, val context
     //역할 : recyclerView 가 생성되었을 때 실행하는 것.
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CustomViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.memo_todo_list_item, parent, false)
-        return CustomViewHolder(view).apply {
+        return CustomViewHolder(
+            view
+        ).apply {
             //itemView 가 클릭 되었을 때
             itemView.setOnClickListener {
                 //쉐어드로 planText 의 값을 보내주어 메모에 반영함.
@@ -30,8 +36,16 @@ class MemoTodoRecyclerViewAdapter(val todoList: ArrayList<TodoForm>, val context
             }
             //DoneTodoList 의 remove 버튼이 클릭 되었을 때
             DoneTodoListRemoveButton.setOnClickListener {
+                val doneTodoId = todoList[adapterPosition].todoId
                 //해당 position 의 값을 삭제함.
                 todoList.removeAt(adapterPosition)
+                if(FirebaseAuth.getInstance().currentUser != null)
+                {
+                    val doneTodoDocRef = FirebaseFirestore.getInstance().collection("users").document(FirebaseAuth.getInstance().currentUser!!.uid)
+                    doneTodoDocRef.collection("DoneTodo").document(doneTodoId).delete().addOnCompleteListener {
+                        Toast.makeText(parent.context.applicationContext, "데이터가 삭제되었습니다.", Toast.LENGTH_LONG).show()
+                    }
+                }
                 //notify 로 recyclerView 에 반영함.
                 notifyItemRemoved(adapterPosition)
                 notifyItemChanged(adapterPosition, todoList.size)

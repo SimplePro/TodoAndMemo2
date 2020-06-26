@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SignUpActivity">
+    tools:context=".activity.SignUpActivity">
 
 
     <TextView
@@ -23,12 +23,14 @@
         />
 
     <EditText
+        android:maxLines="1"
+        android:maxLength="15"
         android:textColor="@android:color/black"
         android:id="@+id/idEditTextSignUp"
         app:layout_constraintTop_toBottomOf="@id/LogoTextViewSignUp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="id"
+        android:hint="id / 5 ~ 15자"
         android:textStyle="bold"
         android:fontFamily="@font/mapo"
         android:layout_marginHorizontal="30dp"
@@ -37,6 +39,8 @@
         />
 
     <EditText
+        android:inputType="textEmailAddress"
+        android:maxLines="1"
         android:textColor="@android:color/black"
         android:id="@+id/emailEditTextSignUp"
         app:layout_constraintTop_toBottomOf="@id/idEditTextSignUp"
@@ -51,24 +55,57 @@
         />
 
     <EditText
+        android:maxLines="1"
+        android:maxLength="15"
+        android:inputType="textPassword"
         android:textColor="@android:color/black"
         android:id="@+id/passwordEditTextSignUp"
         app:layout_constraintTop_toBottomOf="@id/emailEditTextSignUp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="password"
+        android:hint="password / 7 ~ 15 이상"
         android:textStyle="bold"
         android:fontFamily="@font/mapo"
         android:layout_marginHorizontal="30dp"
         android:textSize="20dp"
         android:layout_marginTop="20dp"/>
 
+    <EditText
+        android:maxLines="1"
+        android:maxLength="15"
+        android:inputType="textPassword"
+        android:textColor="@android:color/black"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/passwordEditTextSignUp"
+        android:id="@+id/oneMorePasswordEditTextSignUp"
+        android:hint="password 확인 / 7 ~ 15 이상"
+        android:textStyle="bold"
+        android:fontFamily="@font/mapo"
+        android:layout_marginHorizontal="30dp"
+        android:textSize="20dp"
+        android:layout_marginTop="20dp"/>
+
+<!--    <TextView-->
+<!--        android:id="@+id/previewPasswordTextView"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="비밀번호 미리보기"-->
+<!--        android:fontFamily="@font/mapo"-->
+<!--        android:textStyle="bold"-->
+<!--        android:textSize="15dp"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/oneMorePasswordEditTextSignUp"-->
+<!--        app:layout_constraintRight_toRightOf="@id/passwordEditTextSignUp"-->
+<!--        android:layout_marginRight="10dp"-->
+<!--        android:textColor="#6B5C81"/>-->
+
+
     <Button
         android:elevation="10dp"
         android:id="@+id/SignUpButton"
-        app:layout_constraintTop_toBottomOf="@id/passwordEditTextSignUp"
-        app:layout_constraintRight_toRightOf="@id/passwordEditTextSignUp"
-        app:layout_constraintLeft_toLeftOf="@id/passwordEditTextSignUp"
+        app:layout_constraintTop_toBottomOf="@id/oneMorePasswordEditTextSignUp"
+        app:layout_constraintRight_toRightOf="@id/oneMorePasswordEditTextSignUp"
+        app:layout_constraintLeft_toLeftOf="@id/oneMorePasswordEditTextSignUp"
         android:background="@drawable/login_button_background"
         android:layout_width="150dp"
         android:layout_height="60dp"

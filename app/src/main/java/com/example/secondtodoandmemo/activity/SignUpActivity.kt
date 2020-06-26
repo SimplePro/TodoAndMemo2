@@ -1,14 +1,14 @@
-package com.example.secondtodoandmemo
+package com.example.secondtodoandmemo.activity
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import com.example.secondtodoandmemo.Instance.UserForm
+import com.example.secondtodoandmemo.R
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.firestore.DocumentReference
-import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 import kotlinx.android.synthetic.main.activity_sign_up.*
@@ -19,9 +19,28 @@ class SignUpActivity : AppCompatActivity() {
 
     lateinit var docRef : DocumentReference
 
+    //false 면 안 보여주는 것 true 면 보여주는 것
+    var preViewPasswordBoolean : Boolean = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sign_up)
+
+//        previewPasswordTextView.setOnClickListener {
+//            Log.d("TAG", "setOnClickListener previewPasswordTextView")
+//            if(preViewPasswordBoolean == false)
+//            {
+//                passwordEditTextSignUp.setRawInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD)
+//                oneMorePasswordEditTextSignUp.setRawInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD)
+//                preViewPasswordBoolean = true
+//            }
+//            else if(preViewPasswordBoolean == true)
+//            {
+//                passwordEditTextSignUp.setRawInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD)
+//                oneMorePasswordEditTextSignUp.setRawInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD)
+//                preViewPasswordBoolean = false
+//            }
+//        }
 
         SignUpButton.setOnClickListener {
             createEmailId()
@@ -41,8 +60,37 @@ class SignUpActivity : AppCompatActivity() {
     }
 
     private fun createEmailId() {
+        val id = idEditTextSignUp.text.toString()
         val email = emailEditTextSignUp.text.toString()
         val password = passwordEditTextSignUp.text.toString()
+        val oneMorePassword = oneMorePasswordEditTextSignUp.text.toString()
+
+
+        if(id.trim().length < 5)
+        {
+            Toast.makeText(applicationContext, "아이디은 5자 이상 15자 이하여야 합니다.", Toast.LENGTH_LONG).show()
+        }
+        if(password.trim().length < 5 || oneMorePassword.trim().length < 5)
+        {
+            Toast.makeText(applicationContext, "비밀번호는 7자 이상 15자 이하여야 합니다.", Toast.LENGTH_LONG).show()
+        }
+        else if(password != oneMorePassword)
+        {
+            Toast.makeText(applicationContext, "비밀번호가 같지 않습니다.", Toast.LENGTH_LONG).show()
+        }
+        else {
+            FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password).addOnCompleteListener {
+                if(it.isSuccessful)
+                {
+                    moveNextPage()
+                }
+            }
+                .addOnFailureListener {
+                    Toast.makeText(this, "계정을 만들지 못했습니다. 다시 시도해주세요.", Toast.LENGTH_LONG).show()
+                    Log.d("TAG", it.toString())
+                }
+        }
+
 //        val id = idEditTextSignUp.text.toString()
 
 //        if(FirebaseAuth.getInstance().currentUser != null)
@@ -56,16 +104,6 @@ class SignUpActivity : AppCompatActivity() {
 //            docRef.set(idData, SetOptions.merge())
 //        }
 
-        FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password).addOnCompleteListener {
-            if(it.isSuccessful)
-            {
-                moveNextPage()
-            }
-        }
-            .addOnFailureListener {
-                Toast.makeText(this, "계정을 만들지 못했습니다. 다시 시도해주세요.", Toast.LENGTH_LONG).show()
-                Log.d("TAG", it.toString())
-            }
     }
 
     private fun moveNextPage() {
@@ -75,15 +113,12 @@ class SignUpActivity : AppCompatActivity() {
 
         if(FirebaseAuth.getInstance().currentUser != null)
         {
-            val emailData = mapOf("email" to email)
-            val passwordData = mapOf("password" to password)
-            val idData = mapOf("id" to id)
+
+            val userData = UserForm(id, password, email)
 
             authUid = FirebaseAuth.getInstance().currentUser!!.uid
             docRef = FirebaseFirestore.getInstance().collection("users").document(authUid)
-            docRef.set(emailData, SetOptions.merge())
-            docRef.set(passwordData, SetOptions.merge())
-            docRef.set(idData, SetOptions.merge())
+            docRef.set(userData, SetOptions.merge())
 
             docRef.collection("todo").document()
 //            docRef.set(idData, SetOptions.merge())

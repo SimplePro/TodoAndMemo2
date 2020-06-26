@@ -1,6 +1,5 @@
-package com.example.secondtodoandmemo
+package com.example.secondtodoandmemo.activity
 
-import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -20,19 +19,26 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.GravityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.secondtodoandmemo.*
+import com.example.secondtodoandmemo.Instance.MemoForm
+import com.example.secondtodoandmemo.Instance.TodoForm
+import com.example.secondtodoandmemo.adapter.MemoRecyclerViewAdapter
+import com.example.secondtodoandmemo.adapter.MemoTodoRecyclerViewAdapter
+import com.example.secondtodoandmemo.adapter.TodoRecyclerViewAdapter
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activity_main.*
-import java.lang.Exception
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.ThreadLocalRandom
 import kotlin.collections.ArrayList
 
-class MainActivity : AppCompatActivity(), TodoRecyclerViewAdapter.todoItemClickListener, MemoRecyclerViewAdapter.memoItemClickListener, MemoTodoRecyclerViewAdapter.memoItemViewOnClickListener,
+class MainActivity : AppCompatActivity(),
+    TodoRecyclerViewAdapter.todoItemClickListener,
+    MemoRecyclerViewAdapter.memoItemClickListener,
+    MemoTodoRecyclerViewAdapter.memoItemViewOnClickListener,
         NavigationView.OnNavigationItemSelectedListener
 {
 
@@ -101,17 +107,40 @@ class MainActivity : AppCompatActivity(), TodoRecyclerViewAdapter.todoItemClickL
         setContentView(R.layout.activity_main)
 
         //변수 정의
-        lottieAnimationAlphaAnimation = AnimationUtils.loadAnimation(this, R.anim.lottie_animation_alpha_animation)
-        startLottieAnimationAlphaAnimation = AnimationUtils.loadAnimation(this, R.anim.lottie_animation_alpha_animation2)
+        lottieAnimationAlphaAnimation = AnimationUtils.loadAnimation(this,
+            R.anim.lottie_animation_alpha_animation
+        )
+        startLottieAnimationAlphaAnimation = AnimationUtils.loadAnimation(this,
+            R.anim.lottie_animation_alpha_animation2
+        )
 
-        OutRightSlideAnimation = AnimationUtils.loadAnimation(this, R.anim.out_right_slide_animation)
-        InRightSlideAnimation = AnimationUtils.loadAnimation(this, R.anim.in_right_slide_animation)
+        OutRightSlideAnimation = AnimationUtils.loadAnimation(this,
+            R.anim.out_right_slide_animation
+        )
+        InRightSlideAnimation = AnimationUtils.loadAnimation(this,
+            R.anim.in_right_slide_animation
+        )
 
-        OutLeftSlideAnimation = AnimationUtils.loadAnimation(this, R.anim.out_left_slide_animation)
-        InLeftSlideAnimation = AnimationUtils.loadAnimation(this, R.anim.in_left_slide_animation)
+        OutLeftSlideAnimation = AnimationUtils.loadAnimation(this,
+            R.anim.out_left_slide_animation
+        )
+        InLeftSlideAnimation = AnimationUtils.loadAnimation(this,
+            R.anim.in_left_slide_animation
+        )
 
-        memoAdapter = MemoRecyclerViewAdapter(memoList as ArrayList<MemoForm>, memoSearchList, this)
-        todoAdapter = TodoRecyclerViewAdapter(todoList as ArrayList<TodoForm>, DoneTodoList as ArrayList<TodoForm>, this, todoSearchList)
+        memoAdapter =
+            MemoRecyclerViewAdapter(
+                memoList as ArrayList<MemoForm>,
+                memoSearchList,
+                this
+            )
+        todoAdapter =
+            TodoRecyclerViewAdapter(
+                todoList as ArrayList<TodoForm>,
+                DoneTodoList as ArrayList<TodoForm>,
+                this,
+                todoSearchList
+            )
 
         //만일 todoList 의 사이즈가 1이면 GONE 으로 되는 todoLottieAnimationVisibleForm 을 true 로 바꾸어 LottieAnimationView 를 GONE 형태로 바꾸어 줘야함.
         if(todoList.size >= 1) {
@@ -557,11 +586,21 @@ class MainActivity : AppCompatActivity(), TodoRecyclerViewAdapter.todoItemClickL
             {
                 if(todoList[i].todoId == todoId)
                 {
-                    todoList.set(i, TodoForm(todoText.text.toString(), contentText.text.toString(), todoList[i].todoId))
+                    todoList.set(i,
+                        TodoForm(
+                            todoText.text.toString(),
+                            contentText.text.toString(),
+                            todoList[i].todoId
+                        )
+                    )
                     if(FirebaseAuth.getInstance().currentUser != null)
                     {
                         todoDocRef = FirebaseFirestore.getInstance().collection("users").document(FirebaseAuth.getInstance().currentUser!!.uid).collection("todo").document(todoId)
-                        todoDocRef.set((TodoForm(todoText.text.toString(), contentText.text.toString(), todoList[i].todoId))).addOnCompleteListener {
+                        todoDocRef.set((TodoForm(
+                            todoText.text.toString(),
+                            contentText.text.toString(),
+                            todoList[i].todoId
+                        ))).addOnCompleteListener {
                             Log.d("TAG", "todoList replace success")
                         }
                     }
@@ -648,11 +687,25 @@ class MainActivity : AppCompatActivity(), TodoRecyclerViewAdapter.todoItemClickL
             {
                 if(memoList[i].memoId == memoId)
                 {
-                    memoList.set(i, MemoForm(memoTitleTextDialog.text.toString(), memoContentTextDialog.text.toString(), date_text, "${memoPlanText}", memoList[i].memoId))
+                    memoList.set(i,
+                        MemoForm(
+                            memoTitleTextDialog.text.toString(),
+                            memoContentTextDialog.text.toString(),
+                            date_text,
+                            "${memoPlanText}",
+                            memoList[i].memoId
+                        )
+                    )
                     if(FirebaseAuth.getInstance().currentUser != null)
                     {
                         memoDocRef = FirebaseFirestore.getInstance().collection("users").document(FirebaseAuth.getInstance().currentUser!!.uid).collection("memo").document(memoId)
-                        memoDocRef.set((MemoForm(memoTitleTextDialog.text.toString(), memoContentTextDialog.text.toString(), date_text, memoPlanText, memoList[i].memoId))).addOnCompleteListener {task ->
+                        memoDocRef.set((MemoForm(
+                            memoTitleTextDialog.text.toString(),
+                            memoContentTextDialog.text.toString(),
+                            date_text,
+                            memoPlanText,
+                            memoList[i].memoId
+                        ))).addOnCompleteListener { task ->
                             Log.d("TAG", "memoList replace success")
                         }
                     }
@@ -681,7 +734,12 @@ class MainActivity : AppCompatActivity(), TodoRecyclerViewAdapter.todoItemClickL
         memoPlanTextDialog.setOnClickListener {
             memoListLayoutDialog.visibility = View.INVISIBLE
             memoPlanConstraintLayoutDialog.visibility = View.VISIBLE
-            memoPlanRecyclerViewLayoutDialog.adapter = MemoTodoRecyclerViewAdapter(DoneTodoList, this, this)
+            memoPlanRecyclerViewLayoutDialog.adapter =
+                MemoTodoRecyclerViewAdapter(
+                    DoneTodoList,
+                    this,
+                    this
+                )
             memoPlanRecyclerViewLayoutDialog.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
             memoPlanRecyclerViewLayoutDialog.setHasFixedSize(true)
         }
@@ -814,7 +872,12 @@ class MainActivity : AppCompatActivity(), TodoRecyclerViewAdapter.todoItemClickL
         memoPlanTextDialog.setOnClickListener {
             memoListLayoutDialog.visibility = View.INVISIBLE
             memoPlanConstraintLayoutDialog.visibility = View.VISIBLE
-            memoPlanRecyclerViewLayoutDialog.adapter = MemoTodoRecyclerViewAdapter(DoneTodoList as ArrayList<TodoForm>, this, this)
+            memoPlanRecyclerViewLayoutDialog.adapter =
+                MemoTodoRecyclerViewAdapter(
+                    DoneTodoList as ArrayList<TodoForm>,
+                    this,
+                    this
+                )
             memoPlanRecyclerViewLayoutDialog.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
             memoPlanRecyclerViewLayoutDialog.setHasFixedSize(true)
         }
@@ -836,11 +899,23 @@ class MainActivity : AppCompatActivity(), TodoRecyclerViewAdapter.todoItemClickL
         //만일 투두리스트가 비었다면 그냥 바로 추가하기
         if(todoList.isEmpty())
         {
-            todoList.add(TodoForm(todoText, contentText, todoId))
+            todoList.add(
+                TodoForm(
+                    todoText,
+                    contentText,
+                    todoId
+                )
+            )
             if(FirebaseAuth.getInstance().currentUser != null)
             {
                 todoDocRef = FirebaseFirestore.getInstance().collection("users").document(FirebaseAuth.getInstance().currentUser!!.uid)
-                todoDocRef.collection("todo").document(todoId).set(TodoForm(todoText, contentText, todoId)).addOnCompleteListener {
+                todoDocRef.collection("todo").document(todoId).set(
+                    TodoForm(
+                        todoText,
+                        contentText,
+                        todoId
+                    )
+                ).addOnCompleteListener {
                     Toast.makeText(applicationContext, "데이터가 저장되었습니다.", Toast.LENGTH_LONG).show()
                     Log.d("TAG", "성공")
                 }
@@ -867,11 +942,23 @@ class MainActivity : AppCompatActivity(), TodoRecyclerViewAdapter.todoItemClickL
             }
             if (todoIdBoolean == false)
             {
-                todoList.add(TodoForm(todoText, contentText, todoId))
+                todoList.add(
+                    TodoForm(
+                        todoText,
+                        contentText,
+                        todoId
+                    )
+                )
                 if(FirebaseAuth.getInstance().currentUser != null)
                 {
                     todoDocRef = FirebaseFirestore.getInstance().collection("users").document(FirebaseAuth.getInstance().currentUser!!.uid)
-                    todoDocRef.collection("todo").document(todoId).set(TodoForm(todoText, contentText, todoId)).addOnCompleteListener {
+                    todoDocRef.collection("todo").document(todoId).set(
+                        TodoForm(
+                            todoText,
+                            contentText,
+                            todoId
+                        )
+                    ).addOnCompleteListener {
                         Toast.makeText(applicationContext, "데이터가 저장되었습니다.", Toast.LENGTH_LONG).show()
                         Log.d("TAG", "성공")
                     }
@@ -897,11 +984,23 @@ class MainActivity : AppCompatActivity(), TodoRecyclerViewAdapter.todoItemClickL
                 }
                 if(todoIdBoolean == false)
                 {
-                    todoList.add(TodoForm(todoText, contentText, todoId))
+                    todoList.add(
+                        TodoForm(
+                            todoText,
+                            contentText,
+                            todoId
+                        )
+                    )
                     if(FirebaseAuth.getInstance().currentUser != null)
                     {
                         todoDocRef = FirebaseFirestore.getInstance().collection("users").document(FirebaseAuth.getInstance().currentUser!!.uid)
-                        todoDocRef.collection("todo").document(todoId).set(TodoForm(todoText, contentText, todoId)).addOnCompleteListener {
+                        todoDocRef.collection("todo").document(todoId).set(
+                            TodoForm(
+                                todoText,
+                                contentText,
+                                todoId
+                            )
+                        ).addOnCompleteListener {
                             Toast.makeText(applicationContext, "데이터가 저장되었습니다.", Toast.LENGTH_LONG).show()
                             Log.d("TAG", "성공")
                         }
@@ -928,11 +1027,23 @@ class MainActivity : AppCompatActivity(), TodoRecyclerViewAdapter.todoItemClickL
                     }
                     if(todoIdBoolean == false)
                     {
-                        todoList.add(TodoForm(todoText, contentText, todoId))
+                        todoList.add(
+                            TodoForm(
+                                todoText,
+                                contentText,
+                                todoId
+                            )
+                        )
                         if(FirebaseAuth.getInstance().currentUser != null)
                         {
                             todoDocRef = FirebaseFirestore.getInstance().collection("users").document(FirebaseAuth.getInstance().currentUser!!.uid)
-                            todoDocRef.collection("todo").document(todoId).set(TodoForm(todoText, contentText, todoId)).addOnCompleteListener {
+                            todoDocRef.collection("todo").document(todoId).set(
+                                TodoForm(
+                                    todoText,
+                                    contentText,
+                                    todoId
+                                )
+                            ).addOnCompleteListener {
                                 Toast.makeText(applicationContext, "데이터가 저장되었습니다.", Toast.LENGTH_LONG).show()
                                 Log.d("TAG", "성공")
                             }
@@ -966,12 +1077,28 @@ class MainActivity : AppCompatActivity(), TodoRecyclerViewAdapter.todoItemClickL
         //만일 메모리스트가 비었다면 그냥 바로 추가하기
         if(memoList.isEmpty())
         {
-            memoList.add(0, MemoForm(memoTitle, memoContent, date, "${memoPlan}", memoId))
+            memoList.add(0,
+                MemoForm(
+                    memoTitle,
+                    memoContent,
+                    date,
+                    "${memoPlan}",
+                    memoId
+                )
+            )
             //firestore 에 저장하는 단계
             if(FirebaseAuth.getInstance().currentUser != null)
             {
                 memoDocRef = FirebaseFirestore.getInstance().collection("users").document(FirebaseAuth.getInstance().currentUser!!.uid)
-                memoDocRef.collection("memo").document(memoId).set(MemoForm(memoTitle, memoContent, date, memoPlan, memoId)).addOnCompleteListener {
+                memoDocRef.collection("memo").document(memoId).set(
+                    MemoForm(
+                        memoTitle,
+                        memoContent,
+                        date,
+                        memoPlan,
+                        memoId
+                    )
+                ).addOnCompleteListener {
                     Toast.makeText(applicationContext, "데이터가 저장되었습니다.", Toast.LENGTH_LONG).show()
                     Log.d("TAG", "성공")
                 }
@@ -995,12 +1122,28 @@ class MainActivity : AppCompatActivity(), TodoRecyclerViewAdapter.todoItemClickL
             }
             if (memoIdBoolean == false)
             {
-                memoList.add(0, MemoForm(memoTitle, memoContent, date, "${memoPlan}", memoId))
+                memoList.add(0,
+                    MemoForm(
+                        memoTitle,
+                        memoContent,
+                        date,
+                        "${memoPlan}",
+                        memoId
+                    )
+                )
                 //firestore 에 저장하는 단계
                 if(FirebaseAuth.getInstance().currentUser != null)
                 {
                     memoDocRef = FirebaseFirestore.getInstance().collection("users").document(FirebaseAuth.getInstance().currentUser!!.uid)
-                    memoDocRef.collection("memo").document(memoId).set(MemoForm(memoTitle, memoContent, date, memoPlan, memoId)).addOnCompleteListener {
+                    memoDocRef.collection("memo").document(memoId).set(
+                        MemoForm(
+                            memoTitle,
+                            memoContent,
+                            date,
+                            memoPlan,
+                            memoId
+                        )
+                    ).addOnCompleteListener {
                         Toast.makeText(applicationContext, "데이터가 저장되었습니다.", Toast.LENGTH_LONG).show()
                         Log.d("TAG", "성공")
                     }
@@ -1026,12 +1169,28 @@ class MainActivity : AppCompatActivity(), TodoRecyclerViewAdapter.todoItemClickL
                 }
                 if(memoIdBoolean == false)
                 {
-                    memoList.add(0, MemoForm(memoTitle, memoContent, date, "${memoPlan}", memoId))
+                    memoList.add(0,
+                        MemoForm(
+                            memoTitle,
+                            memoContent,
+                            date,
+                            "${memoPlan}",
+                            memoId
+                        )
+                    )
                     //firestore 에 저장하는 단계
                     if(FirebaseAuth.getInstance().currentUser != null)
                     {
                         memoDocRef = FirebaseFirestore.getInstance().collection("users").document(FirebaseAuth.getInstance().currentUser!!.uid)
-                        memoDocRef.collection("memo").document(memoId).set(MemoForm(memoTitle, memoContent, date, memoPlan, memoId)).addOnCompleteListener {
+                        memoDocRef.collection("memo").document(memoId).set(
+                            MemoForm(
+                                memoTitle,
+                                memoContent,
+                                date,
+                                memoPlan,
+                                memoId
+                            )
+                        ).addOnCompleteListener {
                             Toast.makeText(applicationContext, "데이터가 저장되었습니다.", Toast.LENGTH_LONG).show()
                             Log.d("TAG", "성공")
                         }
@@ -1057,12 +1216,28 @@ class MainActivity : AppCompatActivity(), TodoRecyclerViewAdapter.todoItemClickL
                     }
                     if(memoIdBoolean == false)
                     {
-                        memoList.add(0, MemoForm(memoTitle, memoContent, date, "${memoPlan}", memoId))
+                        memoList.add(0,
+                            MemoForm(
+                                memoTitle,
+                                memoContent,
+                                date,
+                                "${memoPlan}",
+                                memoId
+                            )
+                        )
                         //firestore 에 저장하는 단계
                         if(FirebaseAuth.getInstance().currentUser != null)
                         {
                             memoDocRef = FirebaseFirestore.getInstance().collection("users").document(FirebaseAuth.getInstance().currentUser!!.uid)
-                            memoDocRef.collection("memo").document(memoId).set(MemoForm(memoTitle, memoContent, date, memoPlan, memoId)).addOnCompleteListener {
+                            memoDocRef.collection("memo").document(memoId).set(
+                                MemoForm(
+                                    memoTitle,
+                                    memoContent,
+                                    date,
+                                    memoPlan,
+                                    memoId
+                                )
+                            ).addOnCompleteListener {
                                 Toast.makeText(applicationContext, "데이터가 저장되었습니다.", Toast.LENGTH_LONG).show()
                                 Log.d("TAG", "성공")
                             }
@@ -1098,6 +1273,12 @@ class MainActivity : AppCompatActivity(), TodoRecyclerViewAdapter.todoItemClickL
 
             R.id.secession -> {
 //                val intent = Intent(this, )
+            }
+
+            R.id.changePassword -> {
+                val intent = Intent(this, ChangePasswordChapterOne::class.java)
+                startActivity(intent)
+                finish()
             }
         }
         layout_drawer.closeDrawers()
