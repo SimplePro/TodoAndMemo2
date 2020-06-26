@@ -148,17 +148,7 @@ class MainActivity : AppCompatActivity(),
                 todoSearchList
             )
 
-        //만일 todoList 의 사이즈가 1이면 GONE 으로 되는 todoLottieAnimationVisibleForm 을 true 로 바꾸어 LottieAnimationView 를 GONE 형태로 바꾸어 줘야함.
-        if(todoList.size >= 1) {
-            todoLottieAnimationVisibleForm = true
-        }
-        if(todoLottieAnimationVisibleForm == true) {
-            todoLottieAnimationLayout.startAnimation(lottieAnimationAlphaAnimation)
-            Handler().postDelayed({
-                todoLottieAnimationLayout.visibility = View.GONE
-                todoLottieAnimationVisibleForm = false
-            }, 500)
-        }
+
 
         //onCreate 되었을 때 Firebase 에서 데이터를 가져오는 것.
         if(FirebaseAuth.getInstance().currentUser != null)
@@ -172,8 +162,19 @@ class MainActivity : AppCompatActivity(),
             todoDocRef.collection("todo").get()
                 .addOnSuccessListener {documentSnapshot ->
                     for(todoData in documentSnapshot ) {
-                        Log.d("TAG", "${todoData.id} => ${todoData.data}")
-//                        todoList.add(0, todoData.toObject(TodoForm::class.java)) //1번째
+                        todoList.add(0, todoData.toObject(TodoForm::class.java))
+                        Log.d("TAG", "todo is ${todoList[0].todoId} => ${todoList[0].todo}, ${todoList[0].content}")
+                        //만일 todoList 의 사이즈가 1이면 GONE 으로 되는 todoLottieAnimationVisibleForm 을 true 로 바꾸어 LottieAnimationView 를 GONE 형태로 바꾸어 줘야함.
+                        if(todoList.size >= 1) {
+                            todoLottieAnimationVisibleForm = true
+                        }
+                        if(todoLottieAnimationVisibleForm == true) {
+                            todoLottieAnimationLayout.startAnimation(lottieAnimationAlphaAnimation)
+                            Handler().postDelayed({
+                                todoLottieAnimationLayout.visibility = View.GONE
+                                todoLottieAnimationVisibleForm = false
+                            }, 500)
+                        }
                     }
                 }
                 .addOnFailureListener {exception ->
@@ -184,7 +185,19 @@ class MainActivity : AppCompatActivity(),
                 .addOnSuccessListener {documentSnapshot ->
                     for(memoData in documentSnapshot)
                     {
-                        Log.d("TAG", "${memoData.id} => ${memoData.data}")
+                        memoList.add(0, memoData.toObject(MemoForm::class.java))
+                        Log.d("TAG", "memo is ${memoList[0].memoId} => ${memoList[0].memoTitle}, ${memoList[0].memoContent}, ${memoList[0].memoPlan}")
+                        //여기는 위에 부분과 똑같음. 위에는 todoLottieAnimationVisibleForm 이였지만 여기는 memoLottieAnimationVisibleForm 이다.
+                        if(memoList.size >= 1) {
+                            memoLottieAnimationVisibleForm = true
+                        }
+                        if(memoLottieAnimationVisibleForm == true) {
+                            memoLottieAnimationLayout.startAnimation(lottieAnimationAlphaAnimation)
+                            Handler().postDelayed({
+                                memoLottieAnimationLayout.visibility = View.GONE
+                                memoLottieAnimationVisibleForm = false
+                            }, 500)
+                        }
                     }
                 }
                 .addOnFailureListener { exception ->
@@ -196,12 +209,28 @@ class MainActivity : AppCompatActivity(),
                 .addOnSuccessListener { documentSnapshot ->
                     for(doneTodoData in documentSnapshot)
                     {
-                        Log.d("TAG", "${doneTodoData.id} => ${doneTodoData.data}")
+                        DoneTodoList.add(0, doneTodoData.toObject(TodoForm::class.java))
+                        Log.d("TAG", "doneTodoList is ${DoneTodoList[0].todoId} => ${DoneTodoList[0].todo}, ${DoneTodoList[0].content}}")
                     }
                 }
                 .addOnFailureListener { exception ->
                     Log.d("TAG", "던투두리스트 데이터 불러오기 실패 $exception")
                 }
+
+            todoAdapter.notifyDataSetChanged()
+            memoAdapter.notifyDataSetChanged()
+        }
+
+        //만일 todoList 의 사이즈가 1이면 GONE 으로 되는 todoLottieAnimationVisibleForm 을 true 로 바꾸어 LottieAnimationView 를 GONE 형태로 바꾸어 줘야함.
+        if(todoList.size >= 1) {
+            todoLottieAnimationVisibleForm = true
+        }
+        if(todoLottieAnimationVisibleForm == true) {
+            todoLottieAnimationLayout.startAnimation(lottieAnimationAlphaAnimation)
+            Handler().postDelayed({
+                todoLottieAnimationLayout.visibility = View.GONE
+                todoLottieAnimationVisibleForm = false
+            }, 500)
         }
 
         //여기는 위에 부분과 똑같음. 위에는 todoLottieAnimationVisibleForm 이였지만 여기는 memoLottieAnimationVisibleForm 이다.
