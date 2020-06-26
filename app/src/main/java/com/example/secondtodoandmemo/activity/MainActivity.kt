@@ -93,18 +93,20 @@ class MainActivity : AppCompatActivity(),
 
     lateinit var memoAdapter : MemoRecyclerViewAdapter
     lateinit var todoAdapter : TodoRecyclerViewAdapter
+    lateinit var memoTodoAdapter : MemoTodoRecyclerViewAdapter
 
     var memoSearchList : ArrayList<MemoForm> = arrayListOf()
     var todoSearchList : ArrayList<TodoForm> = arrayListOf()
+
+    lateinit var todoDocRef : DocumentReference
+    lateinit var memoDocRef : DocumentReference
+    lateinit var doneTodoDocRef : DocumentReference
 
     lateinit var todoId: String
     var todoIdBoolean : Boolean = false
     lateinit var memoId: String
     var memoIdBoolean : Boolean = false
 
-    lateinit var todoDocRef : DocumentReference
-    lateinit var memoDocRef : DocumentReference
-    lateinit var doneTodoDocRef : DocumentReference
 
     //역할 : 액티비티가 생성되었을 때.
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
@@ -115,40 +117,18 @@ class MainActivity : AppCompatActivity(),
 
 
         //변수 정의
-        lottieAnimationAlphaAnimation = AnimationUtils.loadAnimation(this,
-            R.anim.lottie_animation_alpha_animation
-        )
-        startLottieAnimationAlphaAnimation = AnimationUtils.loadAnimation(this,
-            R.anim.lottie_animation_alpha_animation2
-        )
+        lottieAnimationAlphaAnimation = AnimationUtils.loadAnimation(this, R.anim.lottie_animation_alpha_animation)
+        startLottieAnimationAlphaAnimation = AnimationUtils.loadAnimation(this, R.anim.lottie_animation_alpha_animation2)
 
-        OutRightSlideAnimation = AnimationUtils.loadAnimation(this,
-            R.anim.out_right_slide_animation
-        )
-        InRightSlideAnimation = AnimationUtils.loadAnimation(this,
-            R.anim.in_right_slide_animation
-        )
+        OutRightSlideAnimation = AnimationUtils.loadAnimation(this, R.anim.out_right_slide_animation)
+        InRightSlideAnimation = AnimationUtils.loadAnimation(this,  R.anim.in_right_slide_animation)
 
-        OutLeftSlideAnimation = AnimationUtils.loadAnimation(this,
-            R.anim.out_left_slide_animation
-        )
-        InLeftSlideAnimation = AnimationUtils.loadAnimation(this,
-            R.anim.in_left_slide_animation
-        )
+        OutLeftSlideAnimation = AnimationUtils.loadAnimation(this, R.anim.out_left_slide_animation)
+        InLeftSlideAnimation = AnimationUtils.loadAnimation(this,  R.anim.in_left_slide_animation)
 
-        memoAdapter =
-            MemoRecyclerViewAdapter(
-                memoList as ArrayList<MemoForm>,
-                memoSearchList,
-                this
-            )
-        todoAdapter =
-            TodoRecyclerViewAdapter(
-                todoList as ArrayList<TodoForm>,
-                DoneTodoList as ArrayList<TodoForm>,
-                this,
-                todoSearchList
-            )
+        memoAdapter = MemoRecyclerViewAdapter(memoList as ArrayList<MemoForm>, memoSearchList,this)
+        todoAdapter = TodoRecyclerViewAdapter(todoList as ArrayList<TodoForm>, DoneTodoList as ArrayList<TodoForm>,this, todoSearchList)
+        memoTodoAdapter = MemoTodoRecyclerViewAdapter(DoneTodoList, this, this)
 
 
         //todoRecyclerView adapter 연결 & RecyclerView 세팅
@@ -221,9 +201,12 @@ class MainActivity : AppCompatActivity(),
                         }
                         if(memoList.isNotEmpty())
                         {
-                            memoAdapter.notifyDataSetChanged()
-                            memoRecyclerView.startAnimation(startLottieAnimationAlphaAnimation)
-                            memoRecyclerView.visibility = View.VISIBLE
+                            if(tabMenuBoolean == "MEMO")
+                            {
+                                memoAdapter.notifyDataSetChanged()
+                                memoRecyclerView.startAnimation(startLottieAnimationAlphaAnimation)
+                                memoRecyclerView.visibility = View.VISIBLE
+                            }
                         }
                     }
                 }
@@ -232,12 +215,16 @@ class MainActivity : AppCompatActivity(),
                         .show()
                     Log.d("TAG", "메모리스트 데이터 불러오기 실패 $exception")
                 }
-            doneTodoDocRef.collection("DoneTOdo").get()
+            doneTodoDocRef.collection("DoneTodo").get()
                 .addOnSuccessListener { documentSnapshot ->
                     for(doneTodoData in documentSnapshot)
                     {
                         DoneTodoList.add(0, doneTodoData.toObject(TodoForm::class.java))
                         Log.d("TAG", "doneTodoList is ${DoneTodoList[0].todoId} => ${DoneTodoList[0].todo}, ${DoneTodoList[0].content}}")
+                        if(DoneTodoList.isNotEmpty())
+                        {
+                            memoTodoAdapter.notifyDataSetChanged()
+                        }
                     }
                 }
                 .addOnFailureListener { exception ->
@@ -916,6 +903,13 @@ class MainActivity : AppCompatActivity(),
         memoSaveButtonDialog = memoMView.findViewById<Button>(R.id.memoSaveButtonDialog)
         memoCancelButtonDialog = memoMView.findViewById<Button>(R.id.memoCancelButtonDialog)
 
+        memoPlanRecyclerViewLayoutDialog.apply {
+            visibility = View.GONE
+            adapter = memoTodoAdapter
+            layoutManager = LinearLayoutManager(this@MainActivity, LinearLayoutManager.VERTICAL, false)
+            setHasFixedSize(true)
+        }
+
         memoBuilder.setView(memoMView)
         memoBuilder.show()
 
@@ -962,14 +956,7 @@ class MainActivity : AppCompatActivity(),
         memoPlanTextDialog.setOnClickListener {
             memoListLayoutDialog.visibility = View.INVISIBLE
             memoPlanConstraintLayoutDialog.visibility = View.VISIBLE
-            memoPlanRecyclerViewLayoutDialog.adapter =
-                MemoTodoRecyclerViewAdapter(
-                    DoneTodoList as ArrayList<TodoForm>,
-                    this,
-                    this
-                )
-            memoPlanRecyclerViewLayoutDialog.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
-            memoPlanRecyclerViewLayoutDialog.setHasFixedSize(true)
+            memoPlanRecyclerViewLayoutDialog.adapter = memoTodoAdapter
         }
 
         //메모 Dialog 안에 있는 RecylerView 가 눌렸을 때.
