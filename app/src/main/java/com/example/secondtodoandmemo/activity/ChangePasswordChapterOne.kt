@@ -43,6 +43,9 @@ class ChangePasswordChapterOne : AppCompatActivity() {
                         }
                     }
                 }
+                    .addOnFailureListener {
+                        Toast.makeText(applicationContext, "통신에 실패하였습니다.", Toast.LENGTH_LONG).show()
+                    }
             }
         }
     }

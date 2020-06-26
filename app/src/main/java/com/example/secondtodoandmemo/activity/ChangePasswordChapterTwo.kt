@@ -43,6 +43,9 @@ class ChangePasswordChapterTwo : AppCompatActivity() {
                             val userData = UserForm(userGetId.toString(), password, userGetEmail.toString())
                             userDocRef.set(userData)
                         }
+                        .addOnFailureListener {
+                            Toast.makeText(applicationContext, "통신에 실패하였습니다.", Toast.LENGTH_LONG).show()
+                        }
                     val intent = Intent(this, MainActivity::class.java)
                     startActivity(intent)
                     finish()

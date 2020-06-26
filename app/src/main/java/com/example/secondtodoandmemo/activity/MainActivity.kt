@@ -1272,7 +1272,9 @@ class MainActivity : AppCompatActivity(),
             }
 
             R.id.secession -> {
-//                val intent = Intent(this, )
+                val intent = Intent(this, SecessionActivity::class.java)
+                startActivity(intent)
+                finish()
             }
 
             R.id.changePassword -> {
