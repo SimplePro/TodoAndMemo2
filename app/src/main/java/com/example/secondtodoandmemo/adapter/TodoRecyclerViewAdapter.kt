@@ -13,6 +13,7 @@ import com.example.secondtodoandmemo.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.SetOptions
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -64,7 +65,7 @@ class TodoRecyclerViewAdapter(val todoList: ArrayList<TodoForm>, val DoneTodoLis
                         if(FirebaseAuth.getInstance().currentUser != null)
                         {
                             DoneTodoDocRef = FirebaseFirestore.getInstance().collection("users").document(FirebaseAuth.getInstance().currentUser!!.uid)
-                            DoneTodoDocRef.collection("DoneTodo").document(todoList[i].todoId).set(todoList[i]).addOnCompleteListener {
+                            DoneTodoDocRef.collection("DoneTodo").document(todoList[i].todoId).set(todoList[i], SetOptions.merge()).addOnCompleteListener {
                                 Log.d("TAG", "DoneTodoDocRef success")
                             }
                         }

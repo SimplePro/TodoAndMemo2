@@ -1,5 +1,6 @@
 package com.example.secondtodoandmemo.activity
 
+import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -27,13 +28,17 @@ import com.example.secondtodoandmemo.adapter.MemoTodoRecyclerViewAdapter
 import com.example.secondtodoandmemo.adapter.TodoRecyclerViewAdapter
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.SetOptions
 import kotlinx.android.synthetic.main.activity_main.*
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.ThreadLocalRandom
 import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
+import kotlin.jvm.java as java
 
 class MainActivity : AppCompatActivity(),
     TodoRecyclerViewAdapter.todoItemClickListener,
@@ -99,6 +104,7 @@ class MainActivity : AppCompatActivity(),
 
     lateinit var todoDocRef : DocumentReference
     lateinit var memoDocRef : DocumentReference
+    lateinit var doneTodoDocRef : DocumentReference
 
     //역할 : 액티비티가 생성되었을 때.
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
@@ -154,6 +160,49 @@ class MainActivity : AppCompatActivity(),
             }, 500)
         }
 
+        //onCreate 되었을 때 Firebase 에서 데이터를 가져오는 것.
+        if(FirebaseAuth.getInstance().currentUser != null)
+        {
+            val userId = FirebaseAuth.getInstance().currentUser!!.uid
+            todoDocRef = FirebaseFirestore.getInstance().collection("users").document(userId)
+            memoDocRef = FirebaseFirestore.getInstance().collection("users").document(userId)
+            doneTodoDocRef = FirebaseFirestore.getInstance().collection("users").document(userId)
+            doneTodoDocRef.collection("DoneTodo")
+
+            todoDocRef.collection("todo").get()
+                .addOnSuccessListener {documentSnapshot ->
+                    for(todoData in documentSnapshot ) {
+                        Log.d("TAG", "${todoData.id} => ${todoData.data}")
+//                        todoList.add(0, todoData.toObject(TodoForm::class.java)) //1번째
+                    }
+                }
+                .addOnFailureListener {exception ->
+                    Toast.makeText(applicationContext, "데이터를 불러오는데 실패했습니다.", Toast.LENGTH_LONG).show()
+                    Log.d("TAG", "투두리스트 데이터 불러오기 실패 $exception")
+                }
+            memoDocRef.collection("memo").get()
+                .addOnSuccessListener {documentSnapshot ->
+                    for(memoData in documentSnapshot)
+                    {
+                        Log.d("TAG", "${memoData.id} => ${memoData.data}")
+                    }
+                }
+                .addOnFailureListener { exception ->
+                    Toast.makeText(applicationContext, "데이터를 불러오는데 실패했습니다.", Toast.LENGTH_LONG)
+                        .show()
+                    Log.d("TAG", "메모리스트 데이터 불러오기 실패 $exception")
+                }
+            doneTodoDocRef.collection("DoneTOdo").get()
+                .addOnSuccessListener { documentSnapshot ->
+                    for(doneTodoData in documentSnapshot)
+                    {
+                        Log.d("TAG", "${doneTodoData.id} => ${doneTodoData.data}")
+                    }
+                }
+                .addOnFailureListener { exception ->
+                    Log.d("TAG", "던투두리스트 데이터 불러오기 실패 $exception")
+                }
+        }
 
         //여기는 위에 부분과 똑같음. 위에는 todoLottieAnimationVisibleForm 이였지만 여기는 memoLottieAnimationVisibleForm 이다.
         if(memoList.size >= 1) {
@@ -166,6 +215,8 @@ class MainActivity : AppCompatActivity(),
                 memoLottieAnimationVisibleForm = false
             }, 500)
         }
+
+
 
 
         //navigationView
@@ -915,6 +966,7 @@ class MainActivity : AppCompatActivity(),
                         contentText,
                         todoId
                     )
+                    , SetOptions.merge()
                 ).addOnCompleteListener {
                     Toast.makeText(applicationContext, "데이터가 저장되었습니다.", Toast.LENGTH_LONG).show()
                     Log.d("TAG", "성공")
@@ -958,6 +1010,7 @@ class MainActivity : AppCompatActivity(),
                             contentText,
                             todoId
                         )
+                    , SetOptions.merge()
                     ).addOnCompleteListener {
                         Toast.makeText(applicationContext, "데이터가 저장되었습니다.", Toast.LENGTH_LONG).show()
                         Log.d("TAG", "성공")
@@ -1000,6 +1053,7 @@ class MainActivity : AppCompatActivity(),
                                 contentText,
                                 todoId
                             )
+                            , SetOptions.merge()
                         ).addOnCompleteListener {
                             Toast.makeText(applicationContext, "데이터가 저장되었습니다.", Toast.LENGTH_LONG).show()
                             Log.d("TAG", "성공")
@@ -1043,6 +1097,7 @@ class MainActivity : AppCompatActivity(),
                                     contentText,
                                     todoId
                                 )
+                                , SetOptions.merge()
                             ).addOnCompleteListener {
                                 Toast.makeText(applicationContext, "데이터가 저장되었습니다.", Toast.LENGTH_LONG).show()
                                 Log.d("TAG", "성공")
@@ -1077,28 +1132,14 @@ class MainActivity : AppCompatActivity(),
         //만일 메모리스트가 비었다면 그냥 바로 추가하기
         if(memoList.isEmpty())
         {
-            memoList.add(0,
-                MemoForm(
-                    memoTitle,
-                    memoContent,
-                    date,
-                    "${memoPlan}",
-                    memoId
-                )
+            memoList.add(0, MemoForm(memoTitle, memoContent, date, "${memoPlan}", memoId)
             )
             //firestore 에 저장하는 단계
             if(FirebaseAuth.getInstance().currentUser != null)
             {
                 memoDocRef = FirebaseFirestore.getInstance().collection("users").document(FirebaseAuth.getInstance().currentUser!!.uid)
-                memoDocRef.collection("memo").document(memoId).set(
-                    MemoForm(
-                        memoTitle,
-                        memoContent,
-                        date,
-                        memoPlan,
-                        memoId
-                    )
-                ).addOnCompleteListener {
+                memoDocRef.collection("memo").document(memoId).set(MemoForm(memoTitle, memoContent, date, memoPlan, memoId), SetOptions.merge())
+                    .addOnCompleteListener {
                     Toast.makeText(applicationContext, "데이터가 저장되었습니다.", Toast.LENGTH_LONG).show()
                     Log.d("TAG", "성공")
                 }
@@ -1143,6 +1184,7 @@ class MainActivity : AppCompatActivity(),
                             memoPlan,
                             memoId
                         )
+                        , SetOptions.merge()
                     ).addOnCompleteListener {
                         Toast.makeText(applicationContext, "데이터가 저장되었습니다.", Toast.LENGTH_LONG).show()
                         Log.d("TAG", "성공")
@@ -1190,6 +1232,7 @@ class MainActivity : AppCompatActivity(),
                                 memoPlan,
                                 memoId
                             )
+                            , SetOptions.merge()
                         ).addOnCompleteListener {
                             Toast.makeText(applicationContext, "데이터가 저장되었습니다.", Toast.LENGTH_LONG).show()
                             Log.d("TAG", "성공")
@@ -1237,6 +1280,7 @@ class MainActivity : AppCompatActivity(),
                                     memoPlan,
                                     memoId
                                 )
+                                , SetOptions.merge()
                             ).addOnCompleteListener {
                                 Toast.makeText(applicationContext, "데이터가 저장되었습니다.", Toast.LENGTH_LONG).show()
                                 Log.d("TAG", "성공")
