@@ -3,4 +3,8 @@
     <color name="colorPrimary">#6200EE</color>
     <color name="colorPrimaryDark">#3700B3</color>
     <color name="colorAccent">#03DAC5</color>
+
+    <color name="colorViewPagerOne">#FBED70</color>
+    <color name="colorViewPagerTwo">#B1D389</color>
+    <color name="colorViewPagerThree">#B3E8EF</color>
 </resources>

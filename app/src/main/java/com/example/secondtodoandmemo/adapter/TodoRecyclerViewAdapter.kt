@@ -8,7 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
-import com.example.secondtodoandmemo.Instance.TodoForm
+import com.example.secondtodoandmemo.instance.TodoInstance
 import com.example.secondtodoandmemo.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentReference
@@ -17,7 +17,7 @@ import com.google.firebase.firestore.SetOptions
 import java.util.*
 import kotlin.collections.ArrayList
 
-class TodoRecyclerViewAdapter(val todoList: ArrayList<TodoForm>, val DoneTodoList: ArrayList<TodoForm>, private val DoneListener: todoItemClickListener, var todoSearchList : ArrayList<TodoForm>)
+class TodoRecyclerViewAdapter(val todoList: ArrayList<TodoInstance>, val DoneTodoList: ArrayList<TodoInstance>, private val DoneListener: todoItemClickListener, var todoSearchList : ArrayList<TodoInstance>)
     : RecyclerView.Adapter<TodoRecyclerViewAdapter.CustomViewHolder>(), Filterable {
 
 //    var todoSearchList : ArrayList<TodoForm>
@@ -109,7 +109,7 @@ class TodoRecyclerViewAdapter(val todoList: ArrayList<TodoForm>, val DoneTodoLis
                 if(charSearch.isEmpty()) {
                     todoSearchList = todoList
                 } else {
-                    val resultList = ArrayList<TodoForm>()
+                    val resultList = ArrayList<TodoInstance>()
                     for(row in todoList)
                     {
                         if(row.todo.toLowerCase(Locale.ROOT).contains(charSearch.toLowerCase(Locale.ROOT))) {
@@ -125,7 +125,7 @@ class TodoRecyclerViewAdapter(val todoList: ArrayList<TodoForm>, val DoneTodoLis
 
             @Suppress("UNCHECKED_CAST")
             override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
-                todoSearchList = results?.values as ArrayList<TodoForm>
+                todoSearchList = results?.values as ArrayList<TodoInstance>
                 notifyDataSetChanged()
             }
         }

@@ -6,11 +6,10 @@ import android.os.Bundle
 import android.widget.Toast
 import com.example.secondtodoandmemo.R
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activity_change_password.*
 
-class ChangePasswordChapterOne : AppCompatActivity() {
+class ChangePasswordChapterOneActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,7 +33,7 @@ class ChangePasswordChapterOne : AppCompatActivity() {
                         val password = changePasswordCheckEditTextChapterOne.text.toString()
                         if(getPassword == password)
                         {
-                            val intent = Intent(this, ChangePasswordChapterTwo::class.java)
+                            val intent = Intent(this, ChangePasswordChapterTwoActivity::class.java)
                             startActivity(intent)
                             finish()
                         }

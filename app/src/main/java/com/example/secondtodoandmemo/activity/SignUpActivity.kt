@@ -5,7 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
-import com.example.secondtodoandmemo.Instance.UserForm
+import com.example.secondtodoandmemo.instance.UserInstance
 import com.example.secondtodoandmemo.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentReference
@@ -111,7 +111,7 @@ class SignUpActivity : AppCompatActivity() {
         if(FirebaseAuth.getInstance().currentUser != null)
         {
 
-            val userData = UserForm(id, password, email)
+            val userData = UserInstance(id, password, email)
 
             authUid = FirebaseAuth.getInstance().currentUser!!.uid
             docRef = FirebaseFirestore.getInstance().collection("users").document(authUid)

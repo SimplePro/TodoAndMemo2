@@ -7,13 +7,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
-import com.example.secondtodoandmemo.Instance.TodoForm
+import com.example.secondtodoandmemo.instance.TodoInstance
 import com.example.secondtodoandmemo.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
 //새로운 다른 itemLayout을 만들었다. (MemoRecyclerView 안에서 Dialog 쪽에서 사용됨. Dialog 안에 있는 RecyclerView의 아이디는 memoPlanRecyclerViewDialog이다.)
-class MemoTodoRecyclerViewAdapter(val todoList: ArrayList<TodoForm>, val context: Context, private val DoneTodoListListener: memoItemViewOnClickListener)
+class MemoTodoRecyclerViewAdapter(val todoList: ArrayList<TodoInstance>, val context: Context, private val DoneTodoListListener: memoItemViewOnClickListener)
     : RecyclerView.Adapter<MemoTodoRecyclerViewAdapter.CustomViewHolder>() {
 
     //itemView 가 클릭 되었을 때 호출되는 콜백 함수.

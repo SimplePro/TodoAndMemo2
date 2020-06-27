@@ -11,9 +11,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-        <activity android:name=".activity.SecessionActivity"></activity>
-        <activity android:name=".activity.ChangePasswordChapterTwo" />
-        <activity android:name=".activity.ChangePasswordChapterOne" />
+        <activity android:name=".activity.IntroduceDeveloperActivity"></activity>
+        <activity android:name=".activity.SecessionActivity" />
+        <activity android:name=".activity.ChangePasswordChapterTwoActivity" />
+        <activity android:name=".activity.ChangePasswordChapterOneActivity" />
         <activity android:name=".activity.SignUpActivity" />
         <activity android:name=".activity.LoginActivity" />
         <activity android:name=".activity.IntroActivity">

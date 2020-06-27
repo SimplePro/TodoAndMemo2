@@ -1,6 +1,5 @@
 package com.example.secondtodoandmemo.activity
 
-import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -21,14 +20,13 @@ import androidx.core.view.GravityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.secondtodoandmemo.*
-import com.example.secondtodoandmemo.Instance.MemoForm
-import com.example.secondtodoandmemo.Instance.TodoForm
+import com.example.secondtodoandmemo.instance.MemoInstance
+import com.example.secondtodoandmemo.instance.TodoInstance
 import com.example.secondtodoandmemo.adapter.MemoRecyclerViewAdapter
 import com.example.secondtodoandmemo.adapter.MemoTodoRecyclerViewAdapter
 import com.example.secondtodoandmemo.adapter.TodoRecyclerViewAdapter
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
@@ -37,7 +35,6 @@ import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.ThreadLocalRandom
 import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
 import kotlin.jvm.java as java
 
 class MainActivity : AppCompatActivity(),
@@ -48,9 +45,9 @@ class MainActivity : AppCompatActivity(),
 {
 
     //변수 선언
-    var todoList: ArrayList<TodoForm> = arrayListOf()
-    var memoList: ArrayList<MemoForm> = arrayListOf()
-    var DoneTodoList: ArrayList<TodoForm> = arrayListOf()
+    var todoList: ArrayList<TodoInstance> = arrayListOf()
+    var memoList: ArrayList<MemoInstance> = arrayListOf()
+    var DoneTodoList: ArrayList<TodoInstance> = arrayListOf()
     //LottieAnimation의 VISIBLE을 정해주기 위해서 선언하는 변수 (false면 VISIBLE true 면 GONE)
     var todoLottieAnimationVisibleForm = false
     var memoLottieAnimationVisibleForm = false
@@ -95,8 +92,8 @@ class MainActivity : AppCompatActivity(),
     lateinit var todoAdapter : TodoRecyclerViewAdapter
     lateinit var memoTodoAdapter : MemoTodoRecyclerViewAdapter
 
-    var memoSearchList : ArrayList<MemoForm> = arrayListOf()
-    var todoSearchList : ArrayList<TodoForm> = arrayListOf()
+    var memoSearchList : ArrayList<MemoInstance> = arrayListOf()
+    var todoSearchList : ArrayList<TodoInstance> = arrayListOf()
 
     lateinit var todoDocRef : DocumentReference
     lateinit var memoDocRef : DocumentReference
@@ -126,8 +123,8 @@ class MainActivity : AppCompatActivity(),
         InLeftSlideAnimation = AnimationUtils.loadAnimation(this,  R.anim.in_left_slide_animation)
 
         memoTodoAdapter = MemoTodoRecyclerViewAdapter(DoneTodoList, this, this)
-        memoAdapter = MemoRecyclerViewAdapter(memoList as ArrayList<MemoForm>, memoSearchList,this)
-        todoAdapter = TodoRecyclerViewAdapter(todoList as ArrayList<TodoForm>, DoneTodoList as ArrayList<TodoForm>,this, todoSearchList)
+        memoAdapter = MemoRecyclerViewAdapter(memoList as ArrayList<MemoInstance>, memoSearchList,this)
+        todoAdapter = TodoRecyclerViewAdapter(todoList as ArrayList<TodoInstance>, DoneTodoList as ArrayList<TodoInstance>,this, todoSearchList)
 
 
         //todoRecyclerView adapter 연결 & RecyclerView 세팅
@@ -156,7 +153,7 @@ class MainActivity : AppCompatActivity(),
             todoDocRef.collection("todo").get()
                 .addOnSuccessListener {documentSnapshot ->
                     for(todoData in documentSnapshot ) {
-                        todoList.add(0, todoData.toObject(TodoForm::class.java))
+                        todoList.add(0, todoData.toObject(TodoInstance::class.java))
                         Log.d("TAG", "todo is ${todoList[0].todoId} => ${todoList[0].todo}, ${todoList[0].content}")
                         //만일 todoList 의 사이즈가 1이면 GONE 으로 되는 todoLottieAnimationVisibleForm 을 true 로 바꾸어 LottieAnimationView 를 GONE 형태로 바꾸어 줘야함.
                         if(todoList.size >= 1) {
@@ -185,7 +182,7 @@ class MainActivity : AppCompatActivity(),
                 .addOnSuccessListener {documentSnapshot ->
                     for(memoData in documentSnapshot)
                     {
-                        memoList.add(0, memoData.toObject(MemoForm::class.java))
+                        memoList.add(0, memoData.toObject(MemoInstance::class.java))
                         Log.d("TAG", "memo is ${memoList[0].memoId} => ${memoList[0].memoTitle}, ${memoList[0].memoContent}, ${memoList[0].memoPlan}")
                         //여기는 위에 부분과 똑같음. 위에는 todoLottieAnimationVisibleForm 이였지만 여기는 memoLottieAnimationVisibleForm 이다.
                         if(memoList.size >= 1) {
@@ -218,7 +215,7 @@ class MainActivity : AppCompatActivity(),
                 .addOnSuccessListener { documentSnapshot ->
                     for(doneTodoData in documentSnapshot)
                     {
-                        DoneTodoList.add(0, doneTodoData.toObject(TodoForm::class.java))
+                        DoneTodoList.add(0, doneTodoData.toObject(TodoInstance::class.java))
                         Log.d("TAG", "doneTodoList is ${DoneTodoList[0].todoId} => ${DoneTodoList[0].todo}, ${DoneTodoList[0].content}}")
                         if(DoneTodoList.isNotEmpty())
                         {
@@ -628,7 +625,7 @@ class MainActivity : AppCompatActivity(),
 
     }
 
-    //todo 의 타이틀과 상세내용을 가져오기 위한 함수.
+    //to do 의 타이틀과 상세내용을 가져오기 위한 함수.
     private fun loadTodoTitleAndContentTextData(){
         val pref = PreferenceManager.getDefaultSharedPreferences(this)
         val todoTitleTextShared = pref.getString("todoTitleText", "")
@@ -644,7 +641,7 @@ class MainActivity : AppCompatActivity(),
         }
     }
 
-    //todo 의 아이디를 가져오기 위한 함수.
+    //to do 의 아이디를 가져오기 위한 함수.
     private fun loadTodoIdData() {
         val pref = PreferenceManager.getDefaultSharedPreferences(this)
         val todoIdShared = pref.getString("todoId", "")
@@ -683,7 +680,7 @@ class MainActivity : AppCompatActivity(),
                 if(todoList[i].todoId == todoId)
                 {
                     todoList.set(i,
-                        TodoForm(
+                        TodoInstance(
                             todoText.text.toString(),
                             contentText.text.toString(),
                             todoList[i].todoId
@@ -692,7 +689,7 @@ class MainActivity : AppCompatActivity(),
                     if(FirebaseAuth.getInstance().currentUser != null)
                     {
                         todoDocRef = FirebaseFirestore.getInstance().collection("users").document(FirebaseAuth.getInstance().currentUser!!.uid).collection("todo").document(todoId)
-                        todoDocRef.set((TodoForm(
+                        todoDocRef.set((TodoInstance(
                             todoText.text.toString(),
                             contentText.text.toString(),
                             todoList[i].todoId
@@ -784,7 +781,7 @@ class MainActivity : AppCompatActivity(),
                 if(memoList[i].memoId == memoId)
                 {
                     memoList.set(i,
-                        MemoForm(
+                        MemoInstance(
                             memoTitleTextDialog.text.toString(),
                             memoContentTextDialog.text.toString(),
                             date_text,
@@ -795,7 +792,7 @@ class MainActivity : AppCompatActivity(),
                     if(FirebaseAuth.getInstance().currentUser != null)
                     {
                         memoDocRef = FirebaseFirestore.getInstance().collection("users").document(FirebaseAuth.getInstance().currentUser!!.uid).collection("memo").document(memoId)
-                        memoDocRef.set((MemoForm(
+                        memoDocRef.set((MemoInstance(
                             memoTitleTextDialog.text.toString(),
                             memoContentTextDialog.text.toString(),
                             date_text,
@@ -996,7 +993,7 @@ class MainActivity : AppCompatActivity(),
         if(todoList.isEmpty())
         {
             todoList.add(
-                TodoForm(
+                TodoInstance(
                     todoText,
                     contentText,
                     todoId
@@ -1006,7 +1003,7 @@ class MainActivity : AppCompatActivity(),
             {
                 todoDocRef = FirebaseFirestore.getInstance().collection("users").document(FirebaseAuth.getInstance().currentUser!!.uid)
                 todoDocRef.collection("todo").document(todoId).set(
-                    TodoForm(
+                    TodoInstance(
                         todoText,
                         contentText,
                         todoId
@@ -1040,7 +1037,7 @@ class MainActivity : AppCompatActivity(),
             if (todoIdBoolean == false)
             {
                 todoList.add(
-                    TodoForm(
+                    TodoInstance(
                         todoText,
                         contentText,
                         todoId
@@ -1050,7 +1047,7 @@ class MainActivity : AppCompatActivity(),
                 {
                     todoDocRef = FirebaseFirestore.getInstance().collection("users").document(FirebaseAuth.getInstance().currentUser!!.uid)
                     todoDocRef.collection("todo").document(todoId).set(
-                        TodoForm(
+                        TodoInstance(
                             todoText,
                             contentText,
                             todoId
@@ -1083,7 +1080,7 @@ class MainActivity : AppCompatActivity(),
                 if(todoIdBoolean == false)
                 {
                     todoList.add(
-                        TodoForm(
+                        TodoInstance(
                             todoText,
                             contentText,
                             todoId
@@ -1093,7 +1090,7 @@ class MainActivity : AppCompatActivity(),
                     {
                         todoDocRef = FirebaseFirestore.getInstance().collection("users").document(FirebaseAuth.getInstance().currentUser!!.uid)
                         todoDocRef.collection("todo").document(todoId).set(
-                            TodoForm(
+                            TodoInstance(
                                 todoText,
                                 contentText,
                                 todoId
@@ -1127,7 +1124,7 @@ class MainActivity : AppCompatActivity(),
                     if(todoIdBoolean == false)
                     {
                         todoList.add(
-                            TodoForm(
+                            TodoInstance(
                                 todoText,
                                 contentText,
                                 todoId
@@ -1137,7 +1134,7 @@ class MainActivity : AppCompatActivity(),
                         {
                             todoDocRef = FirebaseFirestore.getInstance().collection("users").document(FirebaseAuth.getInstance().currentUser!!.uid)
                             todoDocRef.collection("todo").document(todoId).set(
-                                TodoForm(
+                                TodoInstance(
                                     todoText,
                                     contentText,
                                     todoId
@@ -1177,13 +1174,13 @@ class MainActivity : AppCompatActivity(),
         //만일 메모리스트가 비었다면 그냥 바로 추가하기
         if(memoList.isEmpty())
         {
-            memoList.add(0, MemoForm(memoTitle, memoContent, date, "${memoPlan}", memoId)
+            memoList.add(0, MemoInstance(memoTitle, memoContent, date, "${memoPlan}", memoId)
             )
             //firestore 에 저장하는 단계
             if(FirebaseAuth.getInstance().currentUser != null)
             {
                 memoDocRef = FirebaseFirestore.getInstance().collection("users").document(FirebaseAuth.getInstance().currentUser!!.uid)
-                memoDocRef.collection("memo").document(memoId).set(MemoForm(memoTitle, memoContent, date, memoPlan, memoId), SetOptions.merge())
+                memoDocRef.collection("memo").document(memoId).set(MemoInstance(memoTitle, memoContent, date, memoPlan, memoId), SetOptions.merge())
                     .addOnCompleteListener {
                     Toast.makeText(applicationContext, "데이터가 저장되었습니다.", Toast.LENGTH_LONG).show()
                     Log.d("TAG", "성공")
@@ -1209,7 +1206,7 @@ class MainActivity : AppCompatActivity(),
             if (memoIdBoolean == false)
             {
                 memoList.add(0,
-                    MemoForm(
+                    MemoInstance(
                         memoTitle,
                         memoContent,
                         date,
@@ -1222,7 +1219,7 @@ class MainActivity : AppCompatActivity(),
                 {
                     memoDocRef = FirebaseFirestore.getInstance().collection("users").document(FirebaseAuth.getInstance().currentUser!!.uid)
                     memoDocRef.collection("memo").document(memoId).set(
-                        MemoForm(
+                        MemoInstance(
                             memoTitle,
                             memoContent,
                             date,
@@ -1257,7 +1254,7 @@ class MainActivity : AppCompatActivity(),
                 if(memoIdBoolean == false)
                 {
                     memoList.add(0,
-                        MemoForm(
+                        MemoInstance(
                             memoTitle,
                             memoContent,
                             date,
@@ -1270,7 +1267,7 @@ class MainActivity : AppCompatActivity(),
                     {
                         memoDocRef = FirebaseFirestore.getInstance().collection("users").document(FirebaseAuth.getInstance().currentUser!!.uid)
                         memoDocRef.collection("memo").document(memoId).set(
-                            MemoForm(
+                            MemoInstance(
                                 memoTitle,
                                 memoContent,
                                 date,
@@ -1305,7 +1302,7 @@ class MainActivity : AppCompatActivity(),
                     if(memoIdBoolean == false)
                     {
                         memoList.add(0,
-                            MemoForm(
+                            MemoInstance(
                                 memoTitle,
                                 memoContent,
                                 date,
@@ -1318,7 +1315,7 @@ class MainActivity : AppCompatActivity(),
                         {
                             memoDocRef = FirebaseFirestore.getInstance().collection("users").document(FirebaseAuth.getInstance().currentUser!!.uid)
                             memoDocRef.collection("memo").document(memoId).set(
-                                MemoForm(
+                                MemoInstance(
                                     memoTitle,
                                     memoContent,
                                     date,
@@ -1367,7 +1364,13 @@ class MainActivity : AppCompatActivity(),
             }
 
             R.id.changePassword -> {
-                val intent = Intent(this, ChangePasswordChapterOne::class.java)
+                val intent = Intent(this, ChangePasswordChapterOneActivity::class.java)
+                startActivity(intent)
+                finish()
+            }
+
+            R.id.introduceDeveloper -> {
+                val intent = Intent(this, IntroduceDeveloperActivity::class.java)
                 startActivity(intent)
                 finish()
             }
@@ -1386,4 +1389,6 @@ class MainActivity : AppCompatActivity(),
             super.onBackPressed()
         }
     }
+
+
 }

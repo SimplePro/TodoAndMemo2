@@ -4,20 +4,19 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
-import com.example.secondtodoandmemo.Instance.UserForm
+import com.example.secondtodoandmemo.instance.UserInstance
 import com.example.secondtodoandmemo.R
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activity_change_password_chapter_two.*
 
-class ChangePasswordChapterTwo : AppCompatActivity() {
+class ChangePasswordChapterTwoActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_change_password_chapter_two)
 
         backIntentImageViewChapterTwo.setOnClickListener {
-            val intent = Intent(this, ChangePasswordChapterOne::class.java)
+            val intent = Intent(this, ChangePasswordChapterOneActivity::class.java)
             startActivity(intent)
             finish()
         }
@@ -40,7 +39,7 @@ class ChangePasswordChapterTwo : AppCompatActivity() {
                         .addOnCompleteListener {task ->
                             userGetId = task.result!!.getString("id")
                             userGetEmail = task.result!!.getString("email")
-                            val userData = UserForm(userGetId.toString(), password, userGetEmail.toString())
+                            val userData = UserInstance(userGetId.toString(), password, userGetEmail.toString())
                             userDocRef.set(userData)
                         }
                         .addOnFailureListener {
