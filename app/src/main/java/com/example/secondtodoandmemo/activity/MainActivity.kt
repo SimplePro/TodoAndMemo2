@@ -125,9 +125,9 @@ class MainActivity : AppCompatActivity(),
         OutLeftSlideAnimation = AnimationUtils.loadAnimation(this, R.anim.out_left_slide_animation)
         InLeftSlideAnimation = AnimationUtils.loadAnimation(this,  R.anim.in_left_slide_animation)
 
+        memoTodoAdapter = MemoTodoRecyclerViewAdapter(DoneTodoList, this, this)
         memoAdapter = MemoRecyclerViewAdapter(memoList as ArrayList<MemoForm>, memoSearchList,this)
         todoAdapter = TodoRecyclerViewAdapter(todoList as ArrayList<TodoForm>, DoneTodoList as ArrayList<TodoForm>,this, todoSearchList)
-        memoTodoAdapter = MemoTodoRecyclerViewAdapter(DoneTodoList, this, this)
 
 
         //todoRecyclerView adapter 연결 & RecyclerView 세팅
@@ -628,7 +628,7 @@ class MainActivity : AppCompatActivity(),
 
     }
 
-    //todo의 타이틀과 상세내용을 가져오기 위한 함수.
+    //todo 의 타이틀과 상세내용을 가져오기 위한 함수.
     private fun loadTodoTitleAndContentTextData(){
         val pref = PreferenceManager.getDefaultSharedPreferences(this)
         val todoTitleTextShared = pref.getString("todoTitleText", "")
@@ -644,7 +644,7 @@ class MainActivity : AppCompatActivity(),
         }
     }
 
-    //todo의 아이디를 가져오기 위한 함수.
+    //todo 의 아이디를 가져오기 위한 함수.
     private fun loadTodoIdData() {
         val pref = PreferenceManager.getDefaultSharedPreferences(this)
         val todoIdShared = pref.getString("todoId", "")
@@ -878,7 +878,7 @@ class MainActivity : AppCompatActivity(),
         todoButton.setOnClickListener {
             Log.d("TAG", "MainActivity.todoDialogDeclaration - todoButton is pressed")
 
-            makeTodoId(todoText.text.toString(), contentText.text.toString(), todoBuilder)
+            makeTodoIdAndSaveTodoDataInServer(todoText.text.toString(), contentText.text.toString(), todoBuilder)
             //만일 todoList의 아이템을 추가했을 때 todoList 의 사이즈가 1이면 todoLottieAnimationVisibleForm 을 true 로 바꾸어 주어 LottieAnimation 의 Visible 을 조정해주어야 함.
             if (todoList.size == 1) {
                 todoLottieAnimationVisibleForm = true
@@ -933,7 +933,7 @@ class MainActivity : AppCompatActivity(),
         memoSaveButtonDialog.setOnClickListener {
             Log.d("TAG", "MainActivity.memoDialogDeclaration - memoButton is pressed")
             date_text = SimpleDateFormat("yyyy년 MM월 dd일 EE요일", Locale.getDefault()).format(currentTime)
-            makeMemoId(memoTitleTextDialog.text.toString(), memoContentTextDialog.text.toString(), date_text, memoPlanText, memoBuilder)
+            makeMemoIdAndSaveMemoDataInServer(memoTitleTextDialog.text.toString(), memoContentTextDialog.text.toString(), date_text, memoPlanText, memoBuilder)
             //만일 memoList 의 사이즈가 1이라면 memoLottieAnimationVisibleForm 을 true 로 바꾸어 주어 memoLottieAnimationView 를 GONE 으로 바꾸어 주어야 함.
             if (memoList.size == 1) {
                 memoLottieAnimationVisibleForm = true
@@ -985,9 +985,9 @@ class MainActivity : AppCompatActivity(),
         }
     }
 
-    //투두아이디를 생성하는 함수.
+    //투두아이디를 생성하고 FireStore 에 투두 데이터를 저장하는 함수.
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
-    private fun makeTodoId(todoText: String, contentText : String, todoBuilder: AlertDialog) {
+    private fun makeTodoIdAndSaveTodoDataInServer(todoText: String, contentText : String, todoBuilder: AlertDialog) {
         //투두 아이디 주는 것.
         todoId = ThreadLocalRandom.current().nextInt(1000000, 9999999).toString()
         Log.d("TAG", "todoId is ${todoId}")
@@ -1167,9 +1167,9 @@ class MainActivity : AppCompatActivity(),
         }
     }
 
-    //메모아이디를 생성하는 함수.
+    //메모아이디를 생성하는 FireStore 에 메모 데이터를 저장하는 함수.
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
-    private fun makeMemoId(memoTitle: String, memoContent: String, date: String, memoPlan: String, memoBuilder: AlertDialog) {
+    private fun makeMemoIdAndSaveMemoDataInServer(memoTitle: String, memoContent: String, date: String, memoPlan: String, memoBuilder: AlertDialog) {
 
         //메모 아이디 주는 것.
         memoId = ThreadLocalRandom.current().nextInt(1000000, 9999999).toString()
@@ -1375,8 +1375,6 @@ class MainActivity : AppCompatActivity(),
         layout_drawer.closeDrawers()
         return false
     }
-
-
 
     //뒤로가기 버튼 눌렀을 때
     override fun onBackPressed() {
