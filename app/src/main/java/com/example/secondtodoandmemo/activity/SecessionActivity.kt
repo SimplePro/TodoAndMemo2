@@ -4,6 +4,7 @@ import android.content.Intent
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.Window
 import android.widget.Toast
@@ -72,8 +73,10 @@ class SecessionActivity : AppCompatActivity() {
                                         finish()
                                     }
                                 }
-                                    ?.addOnFailureListener {
-                                        Toast.makeText(applicationContext, "탈퇴를 하지 못했습니다.", Toast.LENGTH_LONG).show()
+                                    ?.addOnFailureListener {Exception ->
+                                        FirebaseAuth.getInstance().signOut()
+                                        Toast.makeText(applicationContext, "탈퇴를 하지 못했습니다.\n다시 로그인하여 시도해주세요.", Toast.LENGTH_LONG).show()
+                                        Log.d("TAG", "탈퇴를 하지 못했습니다. $Exception")
                                     }
                             }
 
