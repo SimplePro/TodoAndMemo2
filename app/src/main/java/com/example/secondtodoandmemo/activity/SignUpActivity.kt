@@ -66,13 +66,10 @@ class SignUpActivity : AppCompatActivity() {
         val oneMorePassword = oneMorePasswordEditTextSignUp.text.toString()
 
 
-        if(id.trim().length < 5)
+        if(id.trim().length < 5 || password.trim().length < 7 || oneMorePassword.trim().length < 7)
         {
-            Toast.makeText(applicationContext, "아이디은 5자 이상 15자 이하여야 합니다.", Toast.LENGTH_LONG).show()
-        }
-        else if(password.trim().length < 5 || oneMorePassword.trim().length < 5)
-        {
-            Toast.makeText(applicationContext, "비밀번호는 7자 이상 15자 이하여야 합니다.", Toast.LENGTH_LONG).show()
+            if(id.trim().length < 5 ) Toast.makeText(applicationContext, "아이디은 5자 이상 15자 이하여야 합니다.", Toast.LENGTH_LONG).show()
+            else if(password.trim().length < 7 || oneMorePassword.trim().length < 7) Toast.makeText(applicationContext, "비밀번호는 7자 이상 15자 이하여야 합니다.", Toast.LENGTH_LONG).show()
         }
         else if(password != oneMorePassword)
         {

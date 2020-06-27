@@ -11,4 +11,7 @@
     <item android:id="@+id/secession"
         android:title="탈퇴하기"/>
 
+    <item android:id="@+id/introduceDeveloper"
+        android:title="개발자 소개"/>
+
 </menu>

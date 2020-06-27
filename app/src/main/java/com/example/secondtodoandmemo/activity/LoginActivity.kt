@@ -82,6 +82,16 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        moveNextPage()
+        if(intent.hasExtra("secession"))
+        {
+            val secessionBoolean = intent.getBooleanExtra("secession", false)
+            if(!secessionBoolean)
+            {
+                moveNextPage()
+            }
+        }
+        else {
+            moveNextPage()
+        }
     }
 }

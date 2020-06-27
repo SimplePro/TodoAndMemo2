@@ -903,13 +903,6 @@ class MainActivity : AppCompatActivity(),
         memoSaveButtonDialog = memoMView.findViewById<Button>(R.id.memoSaveButtonDialog)
         memoCancelButtonDialog = memoMView.findViewById<Button>(R.id.memoCancelButtonDialog)
 
-        memoPlanRecyclerViewLayoutDialog.apply {
-            visibility = View.GONE
-            adapter = memoTodoAdapter
-            layoutManager = LinearLayoutManager(this@MainActivity, LinearLayoutManager.VERTICAL, false)
-            setHasFixedSize(true)
-        }
-
         memoBuilder.setView(memoMView)
         memoBuilder.show()
 
@@ -956,7 +949,14 @@ class MainActivity : AppCompatActivity(),
         memoPlanTextDialog.setOnClickListener {
             memoListLayoutDialog.visibility = View.INVISIBLE
             memoPlanConstraintLayoutDialog.visibility = View.VISIBLE
-            memoPlanRecyclerViewLayoutDialog.adapter = memoTodoAdapter
+            memoPlanRecyclerViewLayoutDialog.adapter =
+                MemoTodoRecyclerViewAdapter(
+                    DoneTodoList,
+                    this,
+                    this
+                )
+            memoPlanRecyclerViewLayoutDialog.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+            memoPlanRecyclerViewLayoutDialog.setHasFixedSize(true)
         }
 
         //메모 Dialog 안에 있는 RecylerView 가 눌렸을 때.

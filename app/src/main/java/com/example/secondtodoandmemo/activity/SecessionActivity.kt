@@ -33,6 +33,9 @@ class SecessionActivity : AppCompatActivity() {
                 val currentUser = FirebaseAuth.getInstance().currentUser
                 val userId = FirebaseAuth.getInstance().currentUser!!.uid
                 val docRef = FirebaseFirestore.getInstance().collection("users").document(userId)
+//                val todoDocRef = docRef.collection("tod o") //보류
+//                val memoDocRef = docRef.collection("memo") //보류
+//                val doneTodoRef = docRef.collection("doneTodo") //보류
                 val password = secessionCheckPasswordEditText.text.toString()
                 val userPassword : String?
                 docRef.get()
@@ -56,14 +59,18 @@ class SecessionActivity : AppCompatActivity() {
                             secessionBuilder.show()
 
                             secessionAnswerButton.setOnClickListener {
-                                FirebaseAuth.getInstance().signOut()
                                 currentUser?.delete()?.addOnCompleteListener {task ->
-                                    Toast.makeText(applicationContext, "성공적으로 탈퇴하였습니다.", Toast.LENGTH_LONG).show()
-                                    secessionBuilder.dismiss()
-                                    docRef.delete()
-                                    val intent = Intent(this, LoginActivity::class.java)
-                                    startActivity(intent)
-                                    finish()
+                                    if(task.isSuccessful)
+                                    {
+                                        Toast.makeText(applicationContext, "성공적으로 탈퇴하였습니다.", Toast.LENGTH_LONG).show()
+                                        secessionBuilder.dismiss()
+                                        docRef.delete()
+
+                                        val intent = Intent(this, LoginActivity::class.java)
+                                        intent.putExtra("secession", true)
+                                        startActivity(intent)
+                                        finish()
+                                    }
                                 }
                                     ?.addOnFailureListener {
                                         Toast.makeText(applicationContext, "탈퇴를 하지 못했습니다.", Toast.LENGTH_LONG).show()
