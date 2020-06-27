@@ -256,34 +256,36 @@ class MainActivity : AppCompatActivity(),
         }
 
 
+        //navigation View 의 headerView 를 꾸며주는 코드.
         val headerView = LayoutInflater.from(this).inflate(R.layout.navigation_view_header_layout, null)
+
+        if(FirebaseAuth.getInstance().currentUser != null)
+        {
+            val uid = FirebaseAuth.getInstance().currentUser!!.uid
+            val docRef = FirebaseFirestore.getInstance().collection("users").document(uid)
+            docRef.get()
+                .addOnCompleteListener {task ->
+                    if(task.isSuccessful)
+                    {
+                        val userId = task.result!!.getString("id")
+                        val userEmail = task.result!!.getString("email")
+                        val userImageViewHeaderLayout = headerView.findViewById<ImageView>(R.id.userImageView)
+                        val userInformationHeaderLayout = headerView.findViewById<LinearLayout>(R.id.userInformationLayout)
+                        val userIdHeaderLayout = headerView.findViewById<TextView>(R.id.userIdTextView)
+                        val userEmailHeaderLayout = headerView.findViewById<TextView>(R.id.userEmailTextView)
+                        val viewHeaderLayout = headerView.findViewById<View>(R.id.headerLayoutBottomView)
+                        Log.d("TAG", "userId is $userId")
+                        Log.d("TAG", "userEmail is $userEmail")
+                        userIdHeaderLayout.setText(userId)
+                        userEmailHeaderLayout.setText(userEmail)
+                    }
+                }
+
+        }
 
         //navigationView
         navigationButton.setOnClickListener {
             layout_drawer.openDrawer(GravityCompat.START)
-            if(FirebaseAuth.getInstance().currentUser != null)
-            {
-                val uid = FirebaseAuth.getInstance().currentUser!!.uid
-                val docRef = FirebaseFirestore.getInstance().collection("users").document(uid)
-                docRef.get()
-                    .addOnCompleteListener {task ->
-                        if(task.isSuccessful)
-                        {
-                            val userId = task.result!!.getString("id")
-                            val userEmail = task.result!!.getString("email")
-                            val userImageViewHeaderLayout = headerView.findViewById<ImageView>(R.id.userImageView)
-                            val userInformationHeaderLayout = headerView.findViewById<LinearLayout>(R.id.userInformationLayout)
-                            val userIdHeaderLayout = headerView.findViewById<TextView>(R.id.userIdTextView)
-                            val userEmailHeaderLayout = headerView.findViewById<TextView>(R.id.userEmailTextView)
-                            val viewHeaderLayout = headerView.findViewById<View>(R.id.headerLayoutBottomView)
-                            Log.d("TAG", "userId is $userId")
-                            Log.d("TAG", "userEmail is $userEmail")
-                            userIdHeaderLayout.setText(userId)
-                            userEmailHeaderLayout.setText(userEmail)
-                        }
-                    }
-
-            }
         }
         navigationView.setNavigationItemSelectedListener(this)
         navigationView.addHeaderView(headerView)
