@@ -83,6 +83,9 @@ class SecessionActivity : AppCompatActivity() {
 
 
                         }
+                        else {
+                            Toast.makeText(applicationContext, "비밀번호가 같지 않습니다.", Toast.LENGTH_LONG).show()
+                        }
                     }
             }
         }

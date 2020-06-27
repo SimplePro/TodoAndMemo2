@@ -50,8 +50,6 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun moveNextPage() {
-
-        Log.d("TAG", "uid is ${FirebaseAuth.getInstance().uid}")
         if(FirebaseAuth.getInstance().currentUser != null)
         {
             authUid = FirebaseAuth.getInstance().currentUser!!.uid
@@ -60,7 +58,6 @@ class LoginActivity : AppCompatActivity() {
                 .addOnCompleteListener { task ->
                     if(task.isSuccessful)
                     {
-                        Log.d("TAG", "exist")
                         val result = task.result?.getString("id")
                         Toast.makeText(applicationContext, result + "님 환영합니다", Toast.LENGTH_LONG).show()
                     }

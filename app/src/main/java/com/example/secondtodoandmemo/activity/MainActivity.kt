@@ -115,7 +115,6 @@ class MainActivity : AppCompatActivity(),
         setContentView(R.layout.activity_main)
 
 
-
         //변수 정의
         lottieAnimationAlphaAnimation = AnimationUtils.loadAnimation(this, R.anim.lottie_animation_alpha_animation)
         startLottieAnimationAlphaAnimation = AnimationUtils.loadAnimation(this, R.anim.lottie_animation_alpha_animation2)
@@ -262,6 +261,26 @@ class MainActivity : AppCompatActivity(),
         //navigationView
         navigationButton.setOnClickListener {
             layout_drawer.openDrawer(GravityCompat.START)
+            if(FirebaseAuth.getInstance().currentUser != null)
+            {
+                val uid = FirebaseAuth.getInstance().currentUser!!.uid
+                val docRef = FirebaseFirestore.getInstance().collection("users").document(uid)
+                docRef.get()
+                    .addOnCompleteListener {task ->
+                        if(task.isSuccessful)
+                        {
+                            val userId = task.result!!.getString("id")
+                            val userEmail = task.result!!.getString("email")
+                            val view = LayoutInflater.from(this).inflate(R.layout.navigation_view_header_layout, null)
+                            val userIdHeaderLayout = view.findViewById<TextView>(R.id.userIdTextView)
+                            val userEmailHeaderLayout = view.findViewById<TextView>(R.id.userEmailTextView)
+                            Log.d("TAG", "userId is $userId")
+                            Log.d("TAG", "userEmail is $userEmail")
+                            userIdHeaderLayout.setText("")
+                            userEmailHeaderLayout.setText("")
+                        }
+                    }
+            }
         }
         navigationView.setNavigationItemSelectedListener(this)
 
@@ -1356,6 +1375,8 @@ class MainActivity : AppCompatActivity(),
         layout_drawer.closeDrawers()
         return false
     }
+
+
 
     //뒤로가기 버튼 눌렀을 때
     override fun onBackPressed() {
