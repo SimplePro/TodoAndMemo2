@@ -269,11 +269,8 @@ class MainActivity : AppCompatActivity(),
                     {
                         val userId = task.result!!.getString("id")
                         val userEmail = task.result!!.getString("email")
-                        val userImageViewHeaderLayout = headerView.findViewById<ImageView>(R.id.userImageView)
-                        val userInformationHeaderLayout = headerView.findViewById<LinearLayout>(R.id.userInformationLayout)
                         val userIdHeaderLayout = headerView.findViewById<TextView>(R.id.userIdTextView)
                         val userEmailHeaderLayout = headerView.findViewById<TextView>(R.id.userEmailTextView)
-                        val viewHeaderLayout = headerView.findViewById<View>(R.id.headerLayoutBottomView)
                         Log.d("TAG", "userId is $userId")
                         Log.d("TAG", "userEmail is $userEmail")
                         userIdHeaderLayout.setText(userId)
