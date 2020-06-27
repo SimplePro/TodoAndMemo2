@@ -47,33 +47,45 @@
         android:textColor="@android:color/black"
         />
 
-    <LinearLayout
-        android:id="@+id/onClickGoToMainActivityLayout"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:visibility="gone"
+        android:id="@+id/onClickGoToMainActivityLayout"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/pager_item_title"
-        app:layout_constraintBottom_toBottomOf="@id/pager_item_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="400dp"
+        android:layout_height="400dp"
         android:orientation="vertical"
         >
 
-    <com.airbnb.lottie.LottieAnimationView
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        app:lottie_autoPlay="true"
-        app:lottie_loop="true"
-        app:lottie_fileName="click.json"
-        />
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/onClickGotoMainActivityLottieAnimationView"
+            android:layout_width="300dp"
+            android:layout_height="300dp"
+            android:layout_marginBottom="4dp"
+            android:paddingTop="50dp"
+            android:paddingLeft="80dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:layout_marginLeft="210dp"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="200dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:lottie_autoPlay="true"
+            app:lottie_fileName="click.json"
+            app:lottie_loop="true" />
 
         <TextView
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_gravity="right"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="클릭하면 메인화면으로 돌아갑니다."
+            android:text="클릭시 메인화면으로 이동"
+            android:textSize="13dp"
             android:fontFamily="@font/mapo"
-            android:textColor="#7E000000"/>
+            android:textColor="#000000"/>
 
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

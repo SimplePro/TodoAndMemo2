@@ -12,6 +12,7 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
+import com.airbnb.lottie.LottieAnimationView
 import com.example.secondtodoandmemo.instance.PageInstance
 import com.example.secondtodoandmemo.R
 import com.example.secondtodoandmemo.activity.MainActivity
@@ -44,7 +45,8 @@ class IntroduceDeveloperPagerRecyclerViewAdapter(private val pageList: ArrayList
         private val itemImage: ImageView = itemView.pager_item_image
         private val itemTitle: TextView = itemView.pager_item_title
         private val itemContent: TextView = itemView.pager_item_text
-        private val itemLottieLayout: LinearLayout = itemView.onClickGoToMainActivityLayout
+        private val itemLottieLayout: ConstraintLayout = itemView.onClickGoToMainActivityLayout
+        private val itemLottieAnimation: LottieAnimationView = itemView.onClickGotoMainActivityLottieAnimationView
 
         fun bindWithView(pageItem: PageInstance) {
             itemBg.setBackgroundResource(pageItem.bgColor)
@@ -56,7 +58,7 @@ class IntroduceDeveloperPagerRecyclerViewAdapter(private val pageList: ArrayList
                 itemLottieLayout.visibility = View.VISIBLE
             }
 
-            itemLottieLayout.setOnClickListener {
+            itemLottieAnimation.setOnClickListener {
                 clickListener.setOnClickLottie(it, position)
             }
         }
