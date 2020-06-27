@@ -52,4 +52,10 @@ class ChangePasswordChapterTwoActivity : AppCompatActivity() {
             }
         }
     }
+
+    override fun onBackPressed() {
+        val intent = Intent(this, ChangePasswordChapterOneActivity::class.java)
+        startActivity(intent)
+        finish()
+    }
 }

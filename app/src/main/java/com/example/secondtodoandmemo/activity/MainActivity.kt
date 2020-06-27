@@ -1,5 +1,6 @@
 package com.example.secondtodoandmemo.activity
 
+import android.app.ActionBar
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -16,6 +17,7 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.app.TaskStackBuilder
 import androidx.core.view.GravityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -26,6 +28,7 @@ import com.example.secondtodoandmemo.adapter.MemoRecyclerViewAdapter
 import com.example.secondtodoandmemo.adapter.MemoTodoRecyclerViewAdapter
 import com.example.secondtodoandmemo.adapter.TodoRecyclerViewAdapter
 import com.google.android.material.navigation.NavigationView
+import com.google.api.LogDescriptor
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
@@ -253,7 +256,7 @@ class MainActivity : AppCompatActivity(),
         }
 
 
-
+        val headerView = LayoutInflater.from(this).inflate(R.layout.navigation_view_header_layout, null)
 
         //navigationView
         navigationButton.setOnClickListener {
@@ -268,18 +271,22 @@ class MainActivity : AppCompatActivity(),
                         {
                             val userId = task.result!!.getString("id")
                             val userEmail = task.result!!.getString("email")
-                            val view = LayoutInflater.from(this).inflate(R.layout.navigation_view_header_layout, null)
-                            val userIdHeaderLayout = view.findViewById<TextView>(R.id.userIdTextView)
-                            val userEmailHeaderLayout = view.findViewById<TextView>(R.id.userEmailTextView)
+                            val userImageViewHeaderLayout = headerView.findViewById<ImageView>(R.id.userImageView)
+                            val userInformationHeaderLayout = headerView.findViewById<LinearLayout>(R.id.userInformationLayout)
+                            val userIdHeaderLayout = headerView.findViewById<TextView>(R.id.userIdTextView)
+                            val userEmailHeaderLayout = headerView.findViewById<TextView>(R.id.userEmailTextView)
+                            val viewHeaderLayout = headerView.findViewById<View>(R.id.headerLayoutBottomView)
                             Log.d("TAG", "userId is $userId")
                             Log.d("TAG", "userEmail is $userEmail")
-                            userIdHeaderLayout.setText("")
-                            userEmailHeaderLayout.setText("")
+                            userIdHeaderLayout.setText(userId)
+                            userEmailHeaderLayout.setText(userEmail)
                         }
                     }
+
             }
         }
         navigationView.setNavigationItemSelectedListener(this)
+        navigationView.addHeaderView(headerView)
 
 
         //추가 버튼이 클릭되었을 때.
@@ -1389,6 +1396,4 @@ class MainActivity : AppCompatActivity(),
             super.onBackPressed()
         }
     }
-
-
 }
