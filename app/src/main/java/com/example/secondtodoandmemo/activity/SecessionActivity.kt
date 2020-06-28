@@ -2,6 +2,7 @@ package com.example.secondtodoandmemo.activity
 
 import android.content.Intent
 import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -38,10 +39,12 @@ class SecessionActivity : AppCompatActivity() {
 //                val memoDocRef = docRef.collection("memo") //보류
 //                val doneTodoRef = docRef.collection("doneTodo") //보류
                 val password = secessionCheckPasswordEditText.text.toString()
-                val userPassword : String?
+                var userPassword : String?
+                var userEmail : String?
                 docRef.get()
                     .addOnCompleteListener {task ->
-                        val userPassword = task.result!!.getString("password")
+                        userPassword = task.result!!.getString("password")
+                        userEmail = task.result!!.getString("email")
                         if(userPassword == password)
                         {
                             val secessionDialog = AlertDialog.Builder(this)
@@ -57,25 +60,36 @@ class SecessionActivity : AppCompatActivity() {
 
 
                             secessionBuilder.setView(secessionMView)
+                            secessionMView.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
                             secessionBuilder.show()
 
                             secessionAnswerButton.setOnClickListener {
                                 currentUser?.delete()?.addOnCompleteListener {task ->
                                     if(task.isSuccessful)
                                     {
-                                        Toast.makeText(applicationContext, "성공적으로 탈퇴하였습니다.", Toast.LENGTH_LONG).show()
-                                        secessionBuilder.dismiss()
-                                        docRef.delete()
+                                        docRef.delete().addOnCompleteListener {task ->
+                                            if (task.isSuccessful)
+                                            {
+                                                Log.d("TAG", "탈퇴 - 유저 데이터 삭제 성공")
+                                                Toast.makeText(applicationContext, "성공적으로 탈퇴하였습니다.", Toast.LENGTH_LONG).show()
+                                                secessionBuilder.dismiss()
+                                                val intent = Intent(this, LoginActivity::class.java)
+                                                intent.putExtra("secession", true)
+                                                startActivity(intent)
+                                                finish()
+                                            }
+                                        }
+                                            .addOnFailureListener { exception ->
+                                                Log.d("TAG", "탈퇴 - 유저 데이터 삭제 실패 $exception")
+                                            }
 
-                                        val intent = Intent(this, LoginActivity::class.java)
-                                        intent.putExtra("secession", true)
-                                        startActivity(intent)
-                                        finish()
                                     }
                                 }
                                     ?.addOnFailureListener {Exception ->
                                         FirebaseAuth.getInstance().signOut()
-                                        Toast.makeText(applicationContext, "탈퇴를 하지 못했습니다.\n다시 로그인하여 시도해주세요.", Toast.LENGTH_LONG).show()
+                                        FirebaseAuth.getInstance().signInWithEmailAndPassword(userEmail.toString(), userPassword.toString())
+                                        Toast.makeText(applicationContext, "탈퇴를 하지 못했습니다. 다시 시도해주세요.", Toast.LENGTH_LONG).show()
+
                                         Log.d("TAG", "탈퇴를 하지 못했습니다. $Exception")
                                     }
                             }
