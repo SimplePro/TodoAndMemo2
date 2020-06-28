@@ -3,6 +3,7 @@ package com.example.secondtodoandmemo.activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import com.example.secondtodoandmemo.R
 import com.example.secondtodoandmemo.instance.UserInstance
@@ -41,6 +42,12 @@ class ChangeIdChapterTwoActivity : AppCompatActivity() {
                             userGetEmail = task.result!!.getString("email")
                             val userData = UserInstance(id, userGetPassword.toString(), userGetEmail.toString())
                             userDocRef.set(userData)
+                                .addOnCompleteListener { task ->
+                                    if(task.isSuccessful)
+                                    {
+                                        Log.d("TAG", "유저 데이터 set 성공")
+                                    }
+                                }
                         }
                         .addOnFailureListener {
                             Toast.makeText(applicationContext, "통신에 실패하였습니다.", Toast.LENGTH_LONG).show()
@@ -51,5 +58,11 @@ class ChangeIdChapterTwoActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    override fun onBackPressed() {
+        val intent = Intent(this, ChangeIdChapterOneActivity::class.java)
+        startActivity(intent)
+        finish()
     }
 }

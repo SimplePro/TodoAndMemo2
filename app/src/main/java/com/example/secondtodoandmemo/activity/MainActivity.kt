@@ -255,7 +255,6 @@ class MainActivity : AppCompatActivity(),
             }, 500)
         }
 
-
         //navigation View 의 headerView 를 꾸며주는 코드.
         val headerView = LayoutInflater.from(this).inflate(R.layout.navigation_view_header_layout, null)
 
@@ -263,22 +262,25 @@ class MainActivity : AppCompatActivity(),
         {
             val uid = FirebaseAuth.getInstance().currentUser!!.uid
             val docRef = FirebaseFirestore.getInstance().collection("users").document(uid)
-            docRef.get()
-                .addOnCompleteListener {task ->
-                    if(task.isSuccessful)
-                    {
-                        val userId = task.result!!.getString("id")
-                        val userEmail = task.result!!.getString("email")
-                        val userIdHeaderLayout = headerView.findViewById<TextView>(R.id.userIdTextView)
-                        val userEmailHeaderLayout = headerView.findViewById<TextView>(R.id.userEmailTextView)
-                        Log.d("TAG", "userId is $userId")
-                        Log.d("TAG", "userEmail is $userEmail")
-                        userIdHeaderLayout.setText(userId)
-                        userEmailHeaderLayout.setText(userEmail)
+            Handler().postDelayed({
+                docRef.get()
+                    .addOnCompleteListener {task ->
+                        if(task.isSuccessful)
+                        {
+                            Log.d("TAG", "데이터 가져오기 성공")
+                            val userId = task.result!!.getString("id")
+                            val userEmail = task.result!!.getString("email")
+                            val userIdHeaderLayout = headerView.findViewById<TextView>(R.id.userIdTextView)
+                            val userEmailHeaderLayout = headerView.findViewById<TextView>(R.id.userEmailTextView)
+                            Log.d("TAG", "userId is $userId")
+                            Log.d("TAG", "userEmail is $userEmail")
+                            userIdHeaderLayout.setText(userId)
+                            userEmailHeaderLayout.setText(userEmail)
+                        }
                     }
-                }
-        }
+            }, 500)
 
+        }
 
         //navigationView
         navigationButton.setOnClickListener {
@@ -1388,6 +1390,13 @@ class MainActivity : AppCompatActivity(),
             //아이디 변경이 눌렸을 때
             R.id.changeId -> {
                 val intent = Intent(this, ChangeIdChapterOneActivity::class.java)
+                startActivity(intent)
+                finish()
+            }
+
+            //이메일 변경이 눌렸을 때
+            R.id.changeEmail -> {
+                val intent = Intent(this, ChangeEmailChapterOneActivity::class.java)
                 startActivity(intent)
                 finish()
             }
