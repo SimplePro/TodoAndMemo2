@@ -26,6 +26,7 @@
 
     <EditText
         android:digits="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890@."
+        android:maxLength="28"
         android:inputType="textEmailAddress"
         android:textColor="@android:color/black"
         android:id="@+id/emailEditTextLogin"
