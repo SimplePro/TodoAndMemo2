@@ -3,6 +3,8 @@ package com.example.secondtodoandmemo.activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.InputFilter
+import android.text.Spanned
 import android.util.Log
 import android.widget.Toast
 import com.example.secondtodoandmemo.instance.UserInstance
@@ -12,6 +14,8 @@ import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 import kotlinx.android.synthetic.main.activity_sign_up.*
+import java.util.Locale.filter
+import java.util.regex.Pattern
 
 class SignUpActivity : AppCompatActivity() {
 
@@ -111,7 +115,7 @@ class SignUpActivity : AppCompatActivity() {
         if(FirebaseAuth.getInstance().currentUser != null)
         {
 
-            val userData = UserInstance(id, password, email)
+            val userData = UserInstance(id.trim(), password.trim(), email.trim())
 
             authUid = FirebaseAuth.getInstance().currentUser!!.uid
             docRef = FirebaseFirestore.getInstance().collection("users").document(authUid)
@@ -128,4 +132,23 @@ class SignUpActivity : AppCompatActivity() {
             finish()
         }
     }
+//    filter : InputFilter = InputFilter() {
+//        public CharSequence filter(CharSequence source, int start, int end,
+//            Spanned dest, int dstart, int dend)
+//        {
+//            for (int i = start; i < end; i++) {
+//            if (!isEnglishOrHebrew(source.charAt(i))) {
+//                return "";
+//            }
+//        }
+//            return null;
+//        }
+//
+//        private boolean isEnglishOrHebrew(char c) {
+//            . . .
+//        }
+//    };
+//
+//    edit.setFilters(new InputFilter[]{filter});
+
 }

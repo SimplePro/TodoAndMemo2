@@ -25,6 +25,7 @@
 
 
     <EditText
+        android:digits="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890@."
         android:inputType="textEmailAddress"
         android:textColor="@android:color/black"
         android:id="@+id/emailEditTextLogin"
@@ -40,6 +41,7 @@
         />
 
     <EditText
+        android:digits="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890@."
         android:inputType="textPassword"
         android:textColor="@android:color/black"
         android:id="@+id/passwordEditTextLogin"

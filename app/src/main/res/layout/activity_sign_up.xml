@@ -23,6 +23,7 @@
         />
 
     <EditText
+        android:digits="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890@."
         android:maxLines="1"
         android:maxLength="15"
         android:textColor="@android:color/black"
@@ -39,6 +40,8 @@
         />
 
     <EditText
+        android:digits="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890@."
+        android:maxLength="30"
         android:inputType="textEmailAddress"
         android:maxLines="1"
         android:textColor="@android:color/black"
@@ -55,6 +58,7 @@
         />
 
     <EditText
+        android:digits="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890@."
         android:maxLines="1"
         android:maxLength="15"
         android:inputType="textPassword"
@@ -71,6 +75,7 @@
         android:layout_marginTop="20dp"/>
 
     <EditText
+        android:digits="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890@."
         android:maxLines="1"
         android:maxLength="15"
         android:inputType="textPassword"
