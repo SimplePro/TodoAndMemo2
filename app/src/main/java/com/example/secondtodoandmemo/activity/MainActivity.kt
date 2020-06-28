@@ -277,8 +277,8 @@ class MainActivity : AppCompatActivity(),
                         userEmailHeaderLayout.setText(userEmail)
                     }
                 }
-
         }
+
 
         //navigationView
         navigationButton.setOnClickListener {
@@ -1356,6 +1356,7 @@ class MainActivity : AppCompatActivity(),
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when(item.itemId)
         {
+            //로그아웃 버튼이 눌렸을 때
             R.id.logout -> {
                 FirebaseAuth.getInstance().signOut()
                 val intent = Intent(this, LoginActivity::class.java)
@@ -1363,20 +1364,30 @@ class MainActivity : AppCompatActivity(),
                 finish()
             }
 
+            //탈퇴하기 버튼이 눌렸을 때
             R.id.secession -> {
                 val intent = Intent(this, SecessionActivity::class.java)
                 startActivity(intent)
                 finish()
             }
 
+            //비밀번호 변경이 눌렸을 때
             R.id.changePassword -> {
                 val intent = Intent(this, ChangePasswordChapterOneActivity::class.java)
                 startActivity(intent)
                 finish()
             }
 
+            //개발자 소개가 눌렸을 때
             R.id.introduceDeveloper -> {
                 val intent = Intent(this, IntroduceDeveloperActivity::class.java)
+                startActivity(intent)
+                finish()
+            }
+
+            //아이디 변경이 눌렸을 때
+            R.id.changeId -> {
+                val intent = Intent(this, ChangeIdChapterOneActivity::class.java)
                 startActivity(intent)
                 finish()
             }

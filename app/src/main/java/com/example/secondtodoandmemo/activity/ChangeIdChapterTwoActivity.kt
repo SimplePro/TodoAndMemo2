@@ -4,42 +4,42 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
-import com.example.secondtodoandmemo.instance.UserInstance
 import com.example.secondtodoandmemo.R
+import com.example.secondtodoandmemo.instance.UserInstance
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.android.synthetic.main.activity_change_id_chapter_two.*
 import kotlinx.android.synthetic.main.activity_change_password_chapter_two.*
 
-class ChangePasswordChapterTwoActivity : AppCompatActivity() {
+class ChangeIdChapterTwoActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_change_password_chapter_two)
+        setContentView(R.layout.activity_change_id_chapter_two)
 
-        backIntentImageViewChapterTwoPassword.setOnClickListener {
-            val intent = Intent(this, ChangePasswordChapterOneActivity::class.java)
+        backIntentImageViewChapterTwoId.setOnClickListener {
+            val intent = Intent(this, ChangeIdChapterOneActivity::class.java)
             startActivity(intent)
             finish()
         }
 
-        changePasswordEnterButtonChapterTwo.setOnClickListener {
-            if(changePasswordCheckEditTextChapterTwo.text.toString().trim().length < 7)
+        changeIdEnterButtonChapterTwo.setOnClickListener {
+            if(changeIdCheckEditTextChapterTwo.text.toString().trim().length < 5)
             {
-                Toast.makeText(applicationContext, "비밀번호는 7자 이상 15자 이하여야 합니다.", Toast.LENGTH_LONG).show()
+                Toast.makeText(applicationContext, "아이디는 5자 이상 15자 이하여야 합니다.", Toast.LENGTH_LONG).show()
             }
             else {
                 if(FirebaseAuth.getInstance().currentUser != null)
                 {
                     val userId = FirebaseAuth.getInstance().currentUser!!.uid
-                    val password = changePasswordCheckEditTextChapterTwo.text.toString()
-                    FirebaseAuth.getInstance().currentUser!!.updatePassword(password)
+                    val id = changeIdCheckEditTextChapterTwo.text.toString()
                     val userDocRef = FirebaseFirestore.getInstance().collection("users").document(userId)
-                    var userGetId : String? = null
+                    var userGetPassword : String? = null
                     var userGetEmail : String? = null
                     userDocRef.get()
                         .addOnCompleteListener {task ->
-                            userGetId = task.result!!.getString("id")
+                            userGetPassword = task.result!!.getString("password")
                             userGetEmail = task.result!!.getString("email")
-                            val userData = UserInstance(userGetId.toString(), password, userGetEmail.toString())
+                            val userData = UserInstance(id, userGetPassword.toString(), userGetEmail.toString())
                             userDocRef.set(userData)
                         }
                         .addOnFailureListener {
@@ -51,11 +51,5 @@ class ChangePasswordChapterTwoActivity : AppCompatActivity() {
                 }
             }
         }
-    }
-
-    override fun onBackPressed() {
-        val intent = Intent(this, ChangePasswordChapterOneActivity::class.java)
-        startActivity(intent)
-        finish()
     }
 }

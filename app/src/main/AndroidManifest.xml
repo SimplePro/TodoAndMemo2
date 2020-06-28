@@ -11,7 +11,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-        <activity android:name=".activity.IntroduceDeveloperActivity"></activity>
+        <activity android:name=".activity.ChangeIdChapterTwoActivity"></activity>
+        <activity android:name=".activity.ChangeIdChapterOneActivity" />
+        <activity android:name=".activity.IntroduceDeveloperActivity" />
         <activity android:name=".activity.SecessionActivity" />
         <activity android:name=".activity.ChangePasswordChapterTwoActivity" />
         <activity android:name=".activity.ChangePasswordChapterOneActivity" />

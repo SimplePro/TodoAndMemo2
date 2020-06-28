@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <item android:id="@+id/changeId"
+        android:title="아이디 변경"
+        android:icon="@drawable/id"/>
+
+    <item android:id="@+id/changeEmail"
+        android:title="이메일 변경"
+        android:icon="@drawable/email"/>
+
     <item android:id="@+id/changePassword"
         android:title="비밀번호 변경"
         android:icon="@drawable/password"

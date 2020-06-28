@@ -7,21 +7,21 @@ import android.widget.Toast
 import com.example.secondtodoandmemo.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.android.synthetic.main.activity_change_id_chapter_one.*
 import kotlinx.android.synthetic.main.activity_change_password_chapter_one.*
 
-class ChangePasswordChapterOneActivity : AppCompatActivity() {
-
+class ChangeIdChapterOneActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_change_password_chapter_one)
+        setContentView(R.layout.activity_change_id_chapter_one)
 
-        backIntentImageViewChapterOnePassword.setOnClickListener {
+        backIntentImageViewChapterOneId.setOnClickListener {
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
             finish()
         }
 
-        changePasswordEnterButtonChapterOne.setOnClickListener {
+        changeIdEnterButtonChapterOne.setOnClickListener {
             if(FirebaseAuth.getInstance().currentUser != null)
             {
                 val userId = FirebaseAuth.getInstance().currentUser!!.uid
@@ -30,10 +30,10 @@ class ChangePasswordChapterOneActivity : AppCompatActivity() {
                     if(task.isSuccessful)
                     {
                         val getPassword = task.result!!.getString("password")
-                        val password = changePasswordCheckEditTextChapterOne.text.toString()
+                        val password = changeIdCheckEditTextChapterOne.text.toString()
                         if(getPassword == password)
                         {
-                            val intent = Intent(this, ChangePasswordChapterTwoActivity::class.java)
+                            val intent = Intent(this, ChangeIdChapterTwoActivity::class.java)
                             startActivity(intent)
                             finish()
                         }
