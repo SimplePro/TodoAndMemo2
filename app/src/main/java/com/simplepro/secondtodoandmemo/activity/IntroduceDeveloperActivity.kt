@@ -1,13 +1,13 @@
-package com.example.secondtodoandmemo.activity
+package com.simplepro.secondtodoandmemo.activity
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import androidx.viewpager2.widget.ViewPager2
-import com.example.secondtodoandmemo.instance.PageInstance
-import com.example.secondtodoandmemo.R
-import com.example.secondtodoandmemo.adapter.IntroduceDeveloperPagerRecyclerViewAdapter
+import com.simplepro.secondtodoandmemo.instance.PageInstance
+import com.simplepro.secondtodoandmemo.R
+import com.simplepro.secondtodoandmemo.adapter.IntroduceDeveloperPagerRecyclerViewAdapter
 import kotlinx.android.synthetic.main.activity_introduce_developer.*
 
 class IntroduceDeveloperActivity : AppCompatActivity(), IntroduceDeveloperPagerRecyclerViewAdapter.setOnClickLottieLayout {

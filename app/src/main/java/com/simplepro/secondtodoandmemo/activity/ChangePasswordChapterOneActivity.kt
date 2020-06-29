@@ -1,10 +1,10 @@
-package com.example.secondtodoandmemo.activity
+package com.simplepro.secondtodoandmemo.activity
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
-import com.example.secondtodoandmemo.R
+import com.simplepro.secondtodoandmemo.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activity_change_password_chapter_one.*

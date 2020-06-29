@@ -1,4 +1,4 @@
-package com.example.secondtodoandmemo.adapter
+package com.simplepro.secondtodoandmemo.adapter
 
 import android.content.Context
 import android.preference.PreferenceManager
@@ -8,8 +8,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
-import com.example.secondtodoandmemo.instance.TodoInstance
-import com.example.secondtodoandmemo.R
+import com.simplepro.secondtodoandmemo.instance.TodoInstance
+import com.simplepro.secondtodoandmemo.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore

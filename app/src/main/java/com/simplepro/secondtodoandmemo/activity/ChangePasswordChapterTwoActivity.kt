@@ -1,78 +1,71 @@
-package com.example.secondtodoandmemo.activity
+package com.simplepro.secondtodoandmemo.activity
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
-import com.example.secondtodoandmemo.R
-import com.example.secondtodoandmemo.instance.UserInstance
+import com.simplepro.secondtodoandmemo.instance.UserInstance
+import com.simplepro.secondtodoandmemo.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import kotlinx.android.synthetic.main.activity_change_email_chapter_two.*
-import kotlinx.android.synthetic.main.activity_change_id_chapter_two.*
+import kotlinx.android.synthetic.main.activity_change_password_chapter_two.*
 
-class ChangeEmailChapterTwoActivity : AppCompatActivity() {
+class ChangePasswordChapterTwoActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_change_email_chapter_two)
-        backIntentImageViewChapterTwoEmail.setOnClickListener {
-            val intent = Intent(this, ChangeEmailChapterOneActivity::class.java)
+        setContentView(R.layout.activity_change_password_chapter_two)
+
+        backIntentImageViewChapterTwoPassword.setOnClickListener {
+            val intent = Intent(this, ChangePasswordChapterOneActivity::class.java)
             startActivity(intent)
             finish()
         }
 
-        changeEmailEnterButtonChapterTwo.setOnClickListener {
-            if(changeEmailCheckEditTextChapterTwo.text.toString().isEmpty())
+        changePasswordEnterButtonChapterTwo.setOnClickListener {
+            if(changePasswordCheckEditTextChapterTwo.text.toString().trim().length < 7)
             {
-                Toast.makeText(applicationContext, "이메일을 작성하여야 합니다.", Toast.LENGTH_LONG).show()
+                Toast.makeText(applicationContext, "비밀번호는 7자 이상 15자 이하여야 합니다.", Toast.LENGTH_LONG).show()
             }
             else {
                 if(FirebaseAuth.getInstance().currentUser != null)
                 {
                     val userId = FirebaseAuth.getInstance().currentUser!!.uid
-                    val email = changeEmailCheckEditTextChapterTwo.text.toString()
-                    FirebaseAuth.getInstance().currentUser!!.updateEmail(email)
+                    val password = changePasswordCheckEditTextChapterTwo.text.toString()
+                    FirebaseAuth.getInstance().currentUser!!.updatePassword(password)
                         .addOnCompleteListener { task ->
                             if(task.isSuccessful)
                             {
                                 val userDocRef = FirebaseFirestore.getInstance().collection("users").document(userId)
-                                var userGetPassword : String? = null
                                 var userGetId : String? = null
+                                var userGetEmail : String? = null
                                 userDocRef.get()
                                     .addOnCompleteListener {task ->
-                                        userGetPassword = task.result!!.getString("password")
                                         userGetId = task.result!!.getString("id")
-                                        val userData = UserInstance(userGetId.toString(), userGetPassword.toString(), email)
+                                        userGetEmail = task.result!!.getString("email")
+                                        val userData = UserInstance(userGetId.toString(), password, userGetEmail.toString())
                                         userDocRef.set(userData)
                                             .addOnCompleteListener { task ->
                                                 if(task.isSuccessful)
                                                 {
-                                                    Log.d("TAG", "유저 데이터 set 성공")
-
                                                     val intent = Intent(this, MainActivity::class.java)
                                                     startActivity(intent)
                                                     finish()
                                                 }
                                             }
+
                                     }
                                     .addOnFailureListener {
-                                        Toast.makeText(applicationContext, "통신에 실패하였거나 이메일 형식이 잘못 됬습니다.", Toast.LENGTH_LONG).show()
+                                        Toast.makeText(applicationContext, "통신에 실패하였습니다.", Toast.LENGTH_LONG).show()
                                     }
                             }
                         }
-                        .addOnFailureListener { exception ->
-                            Toast.makeText(applicationContext, "통신에 실패하였거나 이메일 형식이 잘못 됬습니다.", Toast.LENGTH_LONG).show()
-                            Log.d("TAG", "이메일 변경 실패 $exception")
-                        }
-
                 }
             }
         }
     }
 
     override fun onBackPressed() {
-        val intent = Intent(this, ChangeEmailChapterOneActivity::class.java)
+        val intent = Intent(this, ChangePasswordChapterOneActivity::class.java)
         startActivity(intent)
         finish()
     }

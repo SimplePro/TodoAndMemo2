@@ -1,16 +1,15 @@
-package com.example.secondtodoandmemo.activity
+package com.simplepro.secondtodoandmemo.activity
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
-import com.example.secondtodoandmemo.R
-import com.example.secondtodoandmemo.instance.UserInstance
+import com.simplepro.secondtodoandmemo.R
+import com.simplepro.secondtodoandmemo.instance.UserInstance
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activity_change_id_chapter_two.*
-import kotlinx.android.synthetic.main.activity_change_password_chapter_two.*
 
 class ChangeIdChapterTwoActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

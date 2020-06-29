@@ -1,21 +1,15 @@
-package com.example.secondtodoandmemo.adapter
+package com.simplepro.secondtodoandmemo.adapter
 
-import android.content.Context
-import android.content.Intent
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.airbnb.lottie.LottieAnimationView
-import com.example.secondtodoandmemo.instance.PageInstance
-import com.example.secondtodoandmemo.R
-import com.example.secondtodoandmemo.activity.MainActivity
+import com.simplepro.secondtodoandmemo.instance.PageInstance
+import com.simplepro.secondtodoandmemo.R
 import kotlinx.android.synthetic.main.view_pager_item.view.*
 
 

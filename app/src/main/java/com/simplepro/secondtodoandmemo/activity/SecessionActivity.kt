@@ -1,4 +1,4 @@
-package com.example.secondtodoandmemo.activity
+package com.simplepro.secondtodoandmemo.activity
 
 import android.content.Intent
 import android.graphics.Color
@@ -7,14 +7,11 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.Window
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import com.example.secondtodoandmemo.R
+import com.simplepro.secondtodoandmemo.R
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.firestore.FirebaseFirestore
-import io.grpc.internal.SharedResourceHolder
 import kotlinx.android.synthetic.main.activity_secession.*
 import kotlinx.android.synthetic.main.secession_dialog.view.*
 

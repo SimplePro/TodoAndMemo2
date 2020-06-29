@@ -1,6 +1,5 @@
-package com.example.secondtodoandmemo.activity
+package com.simplepro.secondtodoandmemo.activity
 
-import android.app.ActionBar
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -17,18 +16,16 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.app.TaskStackBuilder
 import androidx.core.view.GravityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.secondtodoandmemo.*
-import com.example.secondtodoandmemo.instance.MemoInstance
-import com.example.secondtodoandmemo.instance.TodoInstance
-import com.example.secondtodoandmemo.adapter.MemoRecyclerViewAdapter
-import com.example.secondtodoandmemo.adapter.MemoTodoRecyclerViewAdapter
-import com.example.secondtodoandmemo.adapter.TodoRecyclerViewAdapter
+import com.simplepro.secondtodoandmemo.*
+import com.simplepro.secondtodoandmemo.instance.MemoInstance
+import com.simplepro.secondtodoandmemo.instance.TodoInstance
+import com.simplepro.secondtodoandmemo.adapter.MemoRecyclerViewAdapter
+import com.simplepro.secondtodoandmemo.adapter.MemoTodoRecyclerViewAdapter
+import com.simplepro.secondtodoandmemo.adapter.TodoRecyclerViewAdapter
 import com.google.android.material.navigation.NavigationView
-import com.google.api.LogDescriptor
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore

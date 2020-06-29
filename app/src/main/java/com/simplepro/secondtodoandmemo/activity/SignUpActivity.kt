@@ -1,21 +1,17 @@
-package com.example.secondtodoandmemo.activity
+package com.simplepro.secondtodoandmemo.activity
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.text.InputFilter
-import android.text.Spanned
 import android.util.Log
 import android.widget.Toast
-import com.example.secondtodoandmemo.instance.UserInstance
-import com.example.secondtodoandmemo.R
+import com.simplepro.secondtodoandmemo.instance.UserInstance
+import com.simplepro.secondtodoandmemo.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 import kotlinx.android.synthetic.main.activity_sign_up.*
-import java.util.Locale.filter
-import java.util.regex.Pattern
 
 class SignUpActivity : AppCompatActivity() {
 
