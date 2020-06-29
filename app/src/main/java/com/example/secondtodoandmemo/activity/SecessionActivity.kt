@@ -23,6 +23,24 @@ class SecessionActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_secession)
 
+        val currentUser = FirebaseAuth.getInstance().currentUser
+        val userId = FirebaseAuth.getInstance().currentUser!!.uid
+        val docRef = FirebaseFirestore.getInstance().collection("users").document(userId)
+        var userPassword : String?
+        var userEmail : String?
+
+
+        docRef.get()
+            .addOnCompleteListener { task ->
+                if(task.isSuccessful) {
+                    userPassword = task.result!!.getString("password")
+                    userEmail = task.result!!.getString("email")
+                    FirebaseAuth.getInstance().signOut()
+                    FirebaseAuth.getInstance().signInWithEmailAndPassword(userEmail.toString(), userPassword.toString())
+                }
+            }
+
+
         backIntentImageViewSecession.setOnClickListener {
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
@@ -32,15 +50,10 @@ class SecessionActivity : AppCompatActivity() {
         secessionEnterButton.setOnClickListener {
             if(FirebaseAuth.getInstance().currentUser != null)
             {
-                val currentUser = FirebaseAuth.getInstance().currentUser
-                val userId = FirebaseAuth.getInstance().currentUser!!.uid
-                val docRef = FirebaseFirestore.getInstance().collection("users").document(userId)
 //                val todoDocRef = docRef.collection("tod o") //보류
 //                val memoDocRef = docRef.collection("memo") //보류
 //                val doneTodoRef = docRef.collection("doneTodo") //보류
                 val password = secessionCheckPasswordEditText.text.toString()
-                var userPassword : String?
-                var userEmail : String?
                 docRef.get()
                     .addOnCompleteListener {task ->
                         userPassword = task.result!!.getString("password")
@@ -51,9 +64,6 @@ class SecessionActivity : AppCompatActivity() {
                             val secessionEDialog = LayoutInflater.from(this)
                             val secessionMView = secessionEDialog.inflate(R.layout.secession_dialog, null)
                             val secessionBuilder = secessionDialog.create()
-//                            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-//                            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-//                            dialog.setContentView(layout);
 
                             val secessionAnswerButton = secessionMView.secessionAnswerButtonDialog
                             val secessionCancelButton = secessionMView.secessionCancelButtonDialog
@@ -88,8 +98,8 @@ class SecessionActivity : AppCompatActivity() {
                                     ?.addOnFailureListener {Exception ->
                                         FirebaseAuth.getInstance().signOut()
                                         FirebaseAuth.getInstance().signInWithEmailAndPassword(userEmail.toString(), userPassword.toString())
+                                        secessionBuilder.dismiss()
                                         Toast.makeText(applicationContext, "탈퇴를 하지 못했습니다. 다시 시도해주세요.", Toast.LENGTH_LONG).show()
-
                                         Log.d("TAG", "탈퇴를 하지 못했습니다. $Exception")
                                     }
                             }
