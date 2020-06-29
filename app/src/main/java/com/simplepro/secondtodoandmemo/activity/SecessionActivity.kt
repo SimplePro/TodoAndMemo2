@@ -93,9 +93,17 @@ class SecessionActivity : AppCompatActivity() {
                                     }
                                 }
                                     ?.addOnFailureListener {Exception ->
-                                        FirebaseAuth.getInstance().signOut()
-                                        FirebaseAuth.getInstance().signInWithEmailAndPassword(userEmail.toString(), userPassword.toString())
-                                        secessionBuilder.dismiss()
+//                                        FirebaseAuth.getInstance().signOut()
+//                                        FirebaseAuth.getInstance().signInWithEmailAndPassword(userEmail.toString(), userPassword.toString())
+//                                            .addOnCompleteListener {task.isSuccessful
+//                                                Log.d("TAG", "로그인 성공")
+//                                            }
+//                                            .addOnFailureListener { exception ->
+//                                                Log.d("TAG", "로그인 실패 $exception")
+//                                            }
+                                        val intent = Intent(this, SecessionActivity::class.java)
+                                        startActivity(intent)
+                                        finish()
                                         Toast.makeText(applicationContext, "탈퇴를 하지 못했습니다. 다시 시도해주세요.", Toast.LENGTH_LONG).show()
                                         Log.d("TAG", "탈퇴를 하지 못했습니다. $Exception")
                                     }
