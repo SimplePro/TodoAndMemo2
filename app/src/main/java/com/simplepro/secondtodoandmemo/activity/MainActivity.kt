@@ -72,6 +72,7 @@ class MainActivity : AppCompatActivity(),
     lateinit var memoPlanConstraintLayoutDialog : ConstraintLayout
     lateinit var memoPlanRecyclerViewLayoutDialog : RecyclerView
     lateinit var memoPlanCancelButtonDialog : ImageView
+    lateinit var memoPlanResetTextViewDialog : TextView
     lateinit var memoPlanTextDialog : TextView
     lateinit var memoSaveButtonDialog : Button
     lateinit var memoCancelButtonDialog : Button
@@ -741,8 +742,10 @@ class MainActivity : AppCompatActivity(),
         memoPlanRecyclerViewLayoutDialog = memoMView.findViewById<RecyclerView>(R.id.memoPlanRecyclerViewDialog)
         memoPlanCancelButtonDialog = memoMView.findViewById<ImageView>(R.id.memoPlanCancelImageViewDialog)
         memoPlanTextDialog = memoMView.findViewById<TextView>(R.id.memoListPlanTextViewDialog)
+        memoPlanResetTextViewDialog = memoMView.findViewById(R.id.memoPlanResetTextViewDialog)
         memoSaveButtonDialog = memoMView.findViewById<Button>(R.id.memoSaveButtonDialog)
         memoCancelButtonDialog = memoMView.findViewById<Button>(R.id.memoCancelButtonDialog)
+
         var currentTime: Date = Calendar.getInstance().getTime()
         val date_text: String = SimpleDateFormat("yyyy년 MM월 dd일 EE요일", Locale.getDefault()).format(currentTime)
         loadMemoTitleAndContentTextData()
@@ -828,16 +831,20 @@ class MainActivity : AppCompatActivity(),
             memoPlanConstraintLayoutDialog.visibility = View.GONE
         }
 
+        //memoList 의 planText 초기화 텍스트가 눌렸을 때
+        memoPlanResetTextViewDialog.setOnClickListener {
+            memoPlanText = ""
+            memoPlanTextDialog.setText("무슨 계획을 한 후에 쓰는 메모인가요? (선택)")
+            memoListLayoutDialog.visibility = View.VISIBLE
+            memoPlanConstraintLayoutDialog.visibility = View.GONE
+        }
+
         // 무슨 계획을 한 후에 쓰는 메모인가요? (선택)
         memoPlanTextDialog.setOnClickListener {
             memoListLayoutDialog.visibility = View.INVISIBLE
             memoPlanConstraintLayoutDialog.visibility = View.VISIBLE
             memoPlanRecyclerViewLayoutDialog.adapter =
-                MemoTodoRecyclerViewAdapter(
-                    DoneTodoList,
-                    this,
-                    this
-                )
+                MemoTodoRecyclerViewAdapter(DoneTodoList,this,this)
             memoPlanRecyclerViewLayoutDialog.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
             memoPlanRecyclerViewLayoutDialog.setHasFixedSize(true)
         }
@@ -919,6 +926,7 @@ class MainActivity : AppCompatActivity(),
         memoListLayoutDialog = memoMView.findViewById<ConstraintLayout>(R.id.memoListLayoutDialog)
         memoPlanConstraintLayoutDialog = memoMView.findViewById<ConstraintLayout>(R.id.memoPlanLayoutDialog)
         memoPlanRecyclerViewLayoutDialog = memoMView.findViewById<RecyclerView>(R.id.memoPlanRecyclerViewDialog)
+        memoPlanResetTextViewDialog = memoMView.findViewById(R.id.memoPlanResetTextViewDialog)
         memoPlanCancelButtonDialog = memoMView.findViewById<ImageView>(R.id.memoPlanCancelImageViewDialog)
         memoPlanTextDialog = memoMView.findViewById<TextView>(R.id.memoListPlanTextViewDialog)
         memoSaveButtonDialog = memoMView.findViewById<Button>(R.id.memoSaveButtonDialog)
@@ -962,6 +970,14 @@ class MainActivity : AppCompatActivity(),
 
         //RecyclerView 와 같이 나오는 닫기 버튼 (X 버튼)
         memoPlanCancelButtonDialog.setOnClickListener {
+            memoListLayoutDialog.visibility = View.VISIBLE
+            memoPlanConstraintLayoutDialog.visibility = View.GONE
+        }
+
+        //memoList 의 planText 초기화 텍스트가 눌렸을 때
+        memoPlanResetTextViewDialog.setOnClickListener {
+            memoPlanText = ""
+            memoPlanTextDialog.setText("무슨 계획을 한 후에 쓰는 메모인가요? (선택)")
             memoListLayoutDialog.visibility = View.VISIBLE
             memoPlanConstraintLayoutDialog.visibility = View.GONE
         }
