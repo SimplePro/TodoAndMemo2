@@ -3,6 +3,7 @@ package com.simplepro.secondtodoandmemo.activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import com.simplepro.secondtodoandmemo.instance.UserInstance
 import com.simplepro.secondtodoandmemo.R
@@ -30,18 +31,26 @@ class ChangePasswordChapterTwoActivity : AppCompatActivity() {
                 if(FirebaseAuth.getInstance().currentUser != null)
                 {
                     val userId = FirebaseAuth.getInstance().currentUser!!.uid
+                    val userDocRef = FirebaseFirestore.getInstance().collection("users").document(userId)
                     val password = changePasswordCheckEditTextChapterTwo.text.toString()
+                    var userGetId : String? = null
+                    var userGetEmail : String? = null
+                    var userGetPassword : String? = null
+                    userDocRef.get()
+                        .addOnCompleteListener { task ->
+                            if(task.isSuccessful)
+                            {
+                                userGetEmail = task.result!!.getString("email")
+                                userGetPassword = task.result!!.getString("password")
+                            }
+                        }
                     FirebaseAuth.getInstance().currentUser!!.updatePassword(password)
                         .addOnCompleteListener { task ->
                             if(task.isSuccessful)
                             {
-                                val userDocRef = FirebaseFirestore.getInstance().collection("users").document(userId)
-                                var userGetId : String? = null
-                                var userGetEmail : String? = null
                                 userDocRef.get()
                                     .addOnCompleteListener {task ->
                                         userGetId = task.result!!.getString("id")
-                                        userGetEmail = task.result!!.getString("email")
                                         val userData = UserInstance(userGetId.toString(), password, userGetEmail.toString())
                                         userDocRef.set(userData)
                                             .addOnCompleteListener { task ->
@@ -58,6 +67,12 @@ class ChangePasswordChapterTwoActivity : AppCompatActivity() {
                                         Toast.makeText(applicationContext, "통신에 실패하였습니다.", Toast.LENGTH_LONG).show()
                                     }
                             }
+                        }
+                        .addOnFailureListener { exception ->
+                            FirebaseAuth.getInstance().signOut()
+                            FirebaseAuth.getInstance().signInWithEmailAndPassword(userGetEmail.toString(), userGetPassword.toString())
+                            Toast.makeText(applicationContext, "통신에 실패하였습니다.", Toast.LENGTH_LONG).show()
+                            Log.d("TAG", "업데이트 패스워드 실패 $exception")
                         }
                 }
             }

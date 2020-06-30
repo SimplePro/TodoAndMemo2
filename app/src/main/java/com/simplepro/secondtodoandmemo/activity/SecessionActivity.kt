@@ -65,7 +65,6 @@ class SecessionActivity : AppCompatActivity() {
                             val secessionAnswerButton = secessionMView.secessionAnswerButtonDialog
                             val secessionCancelButton = secessionMView.secessionCancelButtonDialog
 
-
                             secessionBuilder.setView(secessionMView)
                             secessionMView.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
                             secessionBuilder.show()

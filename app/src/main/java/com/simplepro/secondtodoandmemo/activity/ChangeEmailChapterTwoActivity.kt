@@ -32,6 +32,17 @@ class ChangeEmailChapterTwoActivity : AppCompatActivity() {
                 {
                     val userId = FirebaseAuth.getInstance().currentUser!!.uid
                     val email = changeEmailCheckEditTextChapterTwo.text.toString()
+                    var userDocRef =  FirebaseFirestore.getInstance().collection("users").document(userId)
+                    var getEmail : String? = null
+                    var getPassword : String? = null
+                    userDocRef.get()
+                        .addOnCompleteListener { task ->
+                            if(task.isSuccessful)
+                            {
+                                getEmail = task.result!!.getString("email")
+                                getPassword = task.result!!.getString("password")
+                            }
+                        }
                     FirebaseAuth.getInstance().currentUser!!.updateEmail(email)
                         .addOnCompleteListener { task ->
                             if(task.isSuccessful)
@@ -61,6 +72,8 @@ class ChangeEmailChapterTwoActivity : AppCompatActivity() {
                             }
                         }
                         .addOnFailureListener { exception ->
+                            FirebaseAuth.getInstance().signOut()
+                            FirebaseAuth.getInstance().signInWithEmailAndPassword(getEmail.toString(), getPassword.toString())
                             Toast.makeText(applicationContext, "통신에 실패하였거나 이메일 형식이 잘못 됬습니다.", Toast.LENGTH_LONG).show()
                             Log.d("TAG", "이메일 변경 실패 $exception")
                         }
