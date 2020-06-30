@@ -12,6 +12,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activity_change_email_chapter_two.*
 
 class ChangeEmailChapterTwoActivity : AppCompatActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_change_email_chapter_two)
@@ -48,7 +49,6 @@ class ChangeEmailChapterTwoActivity : AppCompatActivity() {
                                                 if(task.isSuccessful)
                                                 {
                                                     Log.d("TAG", "유저 데이터 set 성공")
-
                                                     val intent = Intent(this, MainActivity::class.java)
                                                     startActivity(intent)
                                                     finish()
