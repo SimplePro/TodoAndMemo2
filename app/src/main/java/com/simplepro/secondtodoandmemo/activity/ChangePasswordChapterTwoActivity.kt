@@ -64,14 +64,14 @@ class ChangePasswordChapterTwoActivity : AppCompatActivity() {
 
                                     }
                                     .addOnFailureListener {
-                                        Toast.makeText(applicationContext, "통신에 실패하였습니다.", Toast.LENGTH_LONG).show()
+                                        Toast.makeText(applicationContext, "통신에 실패하였습니다. 다시 시도해주세요.", Toast.LENGTH_LONG).show()
                                     }
                             }
                         }
                         .addOnFailureListener { exception ->
                             FirebaseAuth.getInstance().signOut()
                             FirebaseAuth.getInstance().signInWithEmailAndPassword(userGetEmail.toString(), userGetPassword.toString())
-                            Toast.makeText(applicationContext, "통신에 실패하였습니다.", Toast.LENGTH_LONG).show()
+                            Toast.makeText(applicationContext, "통신에 실패하였습니다. 다시 시도해주세요. ", Toast.LENGTH_LONG).show()
                             Log.d("TAG", "업데이트 패스워드 실패 $exception")
                         }
                 }
