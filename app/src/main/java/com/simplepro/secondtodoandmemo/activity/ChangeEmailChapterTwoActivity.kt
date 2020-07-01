@@ -67,14 +67,14 @@ class ChangeEmailChapterTwoActivity : AppCompatActivity() {
                                             }
                                     }
                                     .addOnFailureListener {
-                                        Toast.makeText(applicationContext, "통신에 실패하였거나 이메일 형식이 잘못 됬습니다.", Toast.LENGTH_LONG).show()
+                                        Toast.makeText(applicationContext, "통신에 실패하였거나 이메일 형식이 잘못 됬습니다. \n 다시시도해주세요.", Toast.LENGTH_LONG).show()
                                     }
                             }
                         }
                         .addOnFailureListener { exception ->
                             FirebaseAuth.getInstance().signOut()
                             FirebaseAuth.getInstance().signInWithEmailAndPassword(getEmail.toString(), getPassword.toString())
-                            Toast.makeText(applicationContext, "통신에 실패하였거나 이메일 형식이 잘못 됬습니다.", Toast.LENGTH_LONG).show()
+                            Toast.makeText(applicationContext, "통신에 실패하였거나 이메일 형식이 잘못 됬습니다. \n 다시시도해주세요.", Toast.LENGTH_LONG).show()
                             Log.d("TAG", "이메일 변경 실패 $exception")
                         }
 

@@ -49,7 +49,8 @@ class ChangeIdChapterTwoActivity : AppCompatActivity() {
                                 }
                         }
                         .addOnFailureListener {
-                            Toast.makeText(applicationContext, "통신에 실패하였습니다.", Toast.LENGTH_LONG).show()
+
+                            Toast.makeText(applicationContext, "통신에 실패하였습니다. 다시 시도해주세요.", Toast.LENGTH_LONG).show()
                         }
                     val intent = Intent(this, MainActivity::class.java)
                     startActivity(intent)
