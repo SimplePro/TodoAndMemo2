@@ -1245,12 +1245,8 @@ class MainActivity : AppCompatActivity(),
                             val user = UserInstance(userId.toString(), userPassword.toString(), userEmail.toString())
                             bind
                             bind.model = NavigationViewModel(user)
-//                            val userIdHeaderLayout = headerView.findViewById<TextView>(R.id.userIdTextView)
-//                            val userEmailHeaderLayout = headerView.findViewById<TextView>(R.id.userEmailTextView)
                             Log.d("TAG", "userId is $userId")
                             Log.d("TAG", "userEmail is $userEmail")
-//                            userIdHeaderLayout.setText(userId)
-//                            userEmailHeaderLayout.setText(userEmail)
                         }
                     }
             }, 500)
