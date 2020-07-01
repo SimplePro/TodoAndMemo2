@@ -17,6 +17,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.GravityCompat
+import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.simplepro.secondtodoandmemo.*
@@ -30,6 +31,9 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
+import com.simplepro.secondtodoandmemo.databinding.NavigationViewHeaderLayoutBinding.bind
+import com.simplepro.secondtodoandmemo.instance.UserInstance
+import com.simplepro.secondtodoandmemo.viewModel.NavigationViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -1219,8 +1223,11 @@ class MainActivity : AppCompatActivity(),
 
     //네비게이션 뷰에 관한 메소드.
     private fun aboutNavigationView() {
+
         //navigation View 의 headerView 를 꾸며주는 코드.
         val headerView = LayoutInflater.from(this).inflate(R.layout.navigation_view_header_layout, null)
+        val bind by lazy { bind(headerView) }
+
 
         if(FirebaseAuth.getInstance().currentUser != null)
         {
@@ -1234,16 +1241,22 @@ class MainActivity : AppCompatActivity(),
                             Log.d("TAG", "데이터 가져오기 성공")
                             val userId = task.result!!.getString("id")
                             val userEmail = task.result!!.getString("email")
-                            val userIdHeaderLayout = headerView.findViewById<TextView>(R.id.userIdTextView)
-                            val userEmailHeaderLayout = headerView.findViewById<TextView>(R.id.userEmailTextView)
+                            val userPassword = task.result!!.getString("password")
+                            val user = UserInstance(userId.toString(), userPassword.toString(), userEmail.toString())
+                            bind
+                            bind.model = NavigationViewModel(user)
+//                            val userIdHeaderLayout = headerView.findViewById<TextView>(R.id.userIdTextView)
+//                            val userEmailHeaderLayout = headerView.findViewById<TextView>(R.id.userEmailTextView)
                             Log.d("TAG", "userId is $userId")
                             Log.d("TAG", "userEmail is $userEmail")
-                            userIdHeaderLayout.setText(userId)
-                            userEmailHeaderLayout.setText(userEmail)
+//                            userIdHeaderLayout.setText(userId)
+//                            userEmailHeaderLayout.setText(userEmail)
                         }
                     }
             }, 500)
         }
+
+
 
         //navigationView
         navigationButton.setOnClickListener {
