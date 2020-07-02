@@ -283,7 +283,7 @@ class MainActivity : AppCompatActivity(),
         val todoContentTextShared = pref.getString("todoContentText", "")
 
         if(todoTitleTextShared != "")
-        {1
+        {
             todoTitleText = todoTitleTextShared.toString()
         }
         if(todoContentTextShared != "")
@@ -320,6 +320,9 @@ class MainActivity : AppCompatActivity(),
 
         todoText.setText(todoTitleText)
         contentText.setText(todoContentText)
+
+        todoTitleText = ""
+        todoContentText = ""
 
         builder.setView(mView)
         builder.show()
