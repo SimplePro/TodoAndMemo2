@@ -91,6 +91,18 @@
         android:textSize="20dp"
         android:layout_marginTop="20dp"/>
 
+    <TextView
+        android:id="@+id/showTermsDialogTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="이용약관 보기 (필수)"
+        android:textColor="#ff0000"
+        android:fontFamily="@font/mapo"
+        app:layout_constraintTop_toBottomOf="@id/oneMorePasswordEditTextSignUp"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginRight="30dp"
+        />
+
 <!--    <TextView-->
 <!--        android:id="@+id/previewPasswordTextView"-->
 <!--        android:layout_width="wrap_content"-->

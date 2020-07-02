@@ -4,7 +4,12 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.widget.Button
+import android.widget.CheckBox
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import com.simplepro.secondtodoandmemo.instance.UserInstance
 import com.simplepro.secondtodoandmemo.R
 import com.google.firebase.auth.FirebaseAuth
@@ -19,12 +24,41 @@ class SignUpActivity : AppCompatActivity() {
 
     lateinit var docRef : DocumentReference
 
+    lateinit var termsDialog: AlertDialog.Builder
+    lateinit var termsEdialog: LayoutInflater
+    lateinit var termsMView: View
+    lateinit var termsBuilder: AlertDialog
+
+    lateinit var termsCheckBox : CheckBox
+    lateinit var termsCancelButton : Button
+
+    //이용약관을 동의하면 true, 아니면 false
+    var termsBoolean = false
+
     //false 면 안 보여주는 것 true 면 보여주는 것
     var preViewPasswordBoolean : Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sign_up)
+
+        termsDialog = AlertDialog.Builder(this)
+        termsEdialog = LayoutInflater.from(this)
+        termsMView = termsEdialog.inflate(R.layout.terms_dialog, null)
+        termsBuilder = termsDialog.create()
+
+        termsCheckBox = termsMView.findViewById(R.id.termsCheckBox)
+        termsCancelButton = termsMView.findViewById(R.id.termsDialogCancelButton)
+
+        termsCancelButton.setOnClickListener {
+            termsBoolean = termsCheckBox.isChecked
+            termsBuilder.dismiss()
+        }
+
+        showTermsDialogTextView.setOnClickListener {
+            termsBuilder.setView(termsMView)
+            termsBuilder.show()
+        }
 
 //        previewPasswordTextView.setOnClickListener {
 //            Log.d("TAG", "setOnClickListener previewPasswordTextView")
@@ -66,7 +100,11 @@ class SignUpActivity : AppCompatActivity() {
         val oneMorePassword = oneMorePasswordEditTextSignUp.text.toString()
 
 
-        if(id.trim().length < 5 || password.trim().length < 7 || oneMorePassword.trim().length < 7 || email.isEmpty())
+        if(termsBoolean == false)
+        {
+            Toast.makeText(applicationContext, "이용약관에 동의해주세요.", Toast.LENGTH_LONG).show()
+        }
+        else if(id.trim().length < 5 || password.trim().length < 7 || oneMorePassword.trim().length < 7 || email.isEmpty())
         {
             if(id.trim().length < 5 ) Toast.makeText(applicationContext, "아이디은 5자 이상 15자 이하여야 합니다.", Toast.LENGTH_LONG).show()
             else if(password.trim().length < 7 || oneMorePassword.trim().length < 7) Toast.makeText(applicationContext, "비밀번호는 7자 이상 15자 이하여야 합니다.", Toast.LENGTH_LONG).show()
