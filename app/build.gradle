@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId "com.simplepro.secondtodoandmemo"
-        minSdkVersion 26
+        minSdkVersion 19
         targetSdkVersion 29
         versionCode 13
         versionName "13.0"
@@ -54,5 +54,8 @@ dependencies {
 
     //인디케이터 애니메이션 오픈 소스
     implementation 'com.tbuonomo.andrui:viewpagerdotsindicator:4.1.2'
+
+    //multiDex
+    compile 'com.android.support:multidex:1.0.1'
 
 }
