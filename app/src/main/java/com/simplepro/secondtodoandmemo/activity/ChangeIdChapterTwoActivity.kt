@@ -55,6 +55,9 @@ class ChangeIdChapterTwoActivity : AppCompatActivity() {
                                 .addOnCompleteListener { task ->
                                     if(task.isSuccessful)
                                     {
+                                        val intent = Intent(this, MainActivity::class.java)
+                                        startActivity(intent)
+                                        finish()
                                         Log.d("TAG", "유저 데이터 set 성공")
                                     }
                                 }
@@ -64,9 +67,6 @@ class ChangeIdChapterTwoActivity : AppCompatActivity() {
                             FirebaseAuth.getInstance().signInWithEmailAndPassword(userGetEmail.toString(), userPassword.toString())
                             Toast.makeText(applicationContext, "통신에 실패하였습니다. 다시 시도해주세요.", Toast.LENGTH_LONG).show()
                         }
-                    val intent = Intent(this, MainActivity::class.java)
-                    startActivity(intent)
-                    finish()
                 }
             }
         }
