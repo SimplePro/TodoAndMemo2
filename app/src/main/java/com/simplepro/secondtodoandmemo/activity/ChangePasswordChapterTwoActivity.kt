@@ -22,6 +22,18 @@ class ChangePasswordChapterTwoActivity : AppCompatActivity() {
             finish()
         }
 
+        var userGetPassword : String? = null
+
+        if(intent.hasExtra("password"))
+        {
+            userGetPassword = intent.getStringExtra("password")
+        }
+        else {
+            val intent = Intent(this, ChangePasswordChapterOneActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
+
         changePasswordEnterButtonChapterTwo.setOnClickListener {
             if(changePasswordCheckEditTextChapterTwo.text.toString().trim().length < 7)
             {
@@ -35,31 +47,21 @@ class ChangePasswordChapterTwoActivity : AppCompatActivity() {
                     val password = changePasswordCheckEditTextChapterTwo.text.toString()
                     var userGetId : String? = null
                     var userGetEmail : String? = null
-                    var userGetPassword : String? = null
                     userDocRef.get()
-                        .addOnCompleteListener { task ->
-                            if(task.isSuccessful)
-                            {
-                                userGetEmail = task.result!!.getString("email")
-                                userGetPassword = task.result!!.getString("password")
-                            }
+                        .addOnSuccessListener { documentSnapshot ->
+                            userGetEmail = documentSnapshot.getString("email")
                         }
                     FirebaseAuth.getInstance().currentUser!!.updatePassword(password)
-                        .addOnCompleteListener { task ->
-                            if(task.isSuccessful)
-                            {
+                        .addOnSuccessListener {documentSnapshot ->
                                 userDocRef.get()
-                                    .addOnCompleteListener {task ->
-                                        userGetId = task.result!!.getString("id")
-                                        val userData = UserInstance(userGetId.toString(), password, userGetEmail.toString())
+                                    .addOnSuccessListener {documentSnapshot ->
+                                        userGetId = documentSnapshot.getString("id")
+                                        val userData = UserInstance(userGetId.toString(), userGetEmail.toString())
                                         userDocRef.set(userData)
-                                            .addOnCompleteListener { task ->
-                                                if(task.isSuccessful)
-                                                {
-                                                    val intent = Intent(this, MainActivity::class.java)
-                                                    startActivity(intent)
-                                                    finish()
-                                                }
+                                            .addOnSuccessListener {documentSnapshot ->
+                                                val intent = Intent(this, MainActivity::class.java)
+                                                startActivity(intent)
+                                                finish()
                                             }
 
                                     }
@@ -67,7 +69,6 @@ class ChangePasswordChapterTwoActivity : AppCompatActivity() {
                                         Toast.makeText(applicationContext, "통신에 실패하였습니다. 다시 시도해주세요.", Toast.LENGTH_LONG).show()
                                     }
                             }
-                        }
                         .addOnFailureListener { exception ->
                             FirebaseAuth.getInstance().signOut()
                             FirebaseAuth.getInstance().signInWithEmailAndPassword(userGetEmail.toString(), userGetPassword.toString())

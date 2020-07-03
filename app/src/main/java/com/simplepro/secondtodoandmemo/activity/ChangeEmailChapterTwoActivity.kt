@@ -22,6 +22,18 @@ class ChangeEmailChapterTwoActivity : AppCompatActivity() {
             finish()
         }
 
+        var password : String? = null
+
+        if(intent.hasExtra("password"))
+        {
+            password = intent.getStringExtra("password")
+        }
+        else {
+            val intent = Intent(this, ChangeEmailChapterOneActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
+
         changeEmailEnterButtonChapterTwo.setOnClickListener {
             if(changeEmailCheckEditTextChapterTwo.text.toString().isEmpty())
             {
@@ -34,13 +46,11 @@ class ChangeEmailChapterTwoActivity : AppCompatActivity() {
                     val email = changeEmailCheckEditTextChapterTwo.text.toString()
                     var userDocRef =  FirebaseFirestore.getInstance().collection("users").document(userId)
                     var getEmail : String? = null
-                    var getPassword : String? = null
                     userDocRef.get()
                         .addOnCompleteListener { task ->
                             if(task.isSuccessful)
                             {
                                 getEmail = task.result!!.getString("email")
-                                getPassword = task.result!!.getString("password")
                             }
                         }
                     FirebaseAuth.getInstance().currentUser!!.updateEmail(email)
@@ -48,13 +58,11 @@ class ChangeEmailChapterTwoActivity : AppCompatActivity() {
                             if(task.isSuccessful)
                             {
                                 val userDocRef = FirebaseFirestore.getInstance().collection("users").document(userId)
-                                var userGetPassword : String? = null
                                 var userGetId : String? = null
                                 userDocRef.get()
                                     .addOnCompleteListener {task ->
-                                        userGetPassword = task.result!!.getString("password")
                                         userGetId = task.result!!.getString("id")
-                                        val userData = UserInstance(userGetId.toString(), userGetPassword.toString(), email)
+                                        val userData = UserInstance(userGetId.toString(), email)
                                         userDocRef.set(userData)
                                             .addOnCompleteListener { task ->
                                                 if(task.isSuccessful)
@@ -73,7 +81,7 @@ class ChangeEmailChapterTwoActivity : AppCompatActivity() {
                         }
                         .addOnFailureListener { exception ->
                             FirebaseAuth.getInstance().signOut()
-                            FirebaseAuth.getInstance().signInWithEmailAndPassword(getEmail.toString(), getPassword.toString())
+                            FirebaseAuth.getInstance().signInWithEmailAndPassword(getEmail.toString(), password.toString())
                             Toast.makeText(applicationContext, "통신에 실패하였거나 이메일 형식이 잘못 됬습니다. \n 다시시도해주세요.", Toast.LENGTH_LONG).show()
                             Log.d("TAG", "이메일 변경 실패 $exception")
                         }

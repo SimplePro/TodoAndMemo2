@@ -150,7 +150,7 @@ class SignUpActivity : AppCompatActivity() {
         if(FirebaseAuth.getInstance().currentUser != null)
         {
 
-            val userData = UserInstance(id.trim(), password.trim(), email.trim())
+            val userData = UserInstance(id.trim(), email.trim())
 
             authUid = FirebaseAuth.getInstance().currentUser!!.uid
             docRef = FirebaseFirestore.getInstance().collection("users").document(authUid)

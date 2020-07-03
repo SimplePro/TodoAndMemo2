@@ -4,6 +4,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
+import androidx.core.content.ContextCompat.startActivity
 import com.simplepro.secondtodoandmemo.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -22,30 +23,32 @@ class ChangePasswordChapterOneActivity : AppCompatActivity() {
         }
 
         changePasswordEnterButtonChapterOne.setOnClickListener {
-            if(FirebaseAuth.getInstance().currentUser != null)
-            {
+            if (FirebaseAuth.getInstance().currentUser != null) {
                 val userId = FirebaseAuth.getInstance().currentUser!!.uid
-                val userDocRef = FirebaseFirestore.getInstance().collection("users").document(userId)
-                userDocRef.get().addOnCompleteListener {task ->
-                    if(task.isSuccessful)
-                    {
-                        val getPassword = task.result!!.getString("password")
-                        val password = changePasswordCheckEditTextChapterOne.text.toString()
-                        if(getPassword == password)
-                        {
+                val userDocRef =
+                    FirebaseFirestore.getInstance().collection("users").document(userId)
+                userDocRef.get().addOnSuccessListener { documentSnapshot ->
+                    val userEmail = documentSnapshot.getString("email")
+                    val password = changePasswordCheckEditTextChapterOne.text.toString()
+                    FirebaseAuth.getInstance().signOut()
+                    FirebaseAuth.getInstance()
+                        .signInWithEmailAndPassword(userEmail.toString(), password)
+                        .addOnSuccessListener {
                             val intent = Intent(this, ChangePasswordChapterTwoActivity::class.java)
+                            intent.putExtra("password", password)
                             startActivity(intent)
                             finish()
                         }
-                        else {
-                            Toast.makeText(applicationContext, "비밀번호가 같지 않습니다.", Toast.LENGTH_LONG).show()
+                        .addOnFailureListener { exception ->
+                            Toast.makeText(applicationContext, "비밀번호가 같지 않습니다.", Toast.LENGTH_LONG)
+                                .show()
                         }
-                    }
                 }
                     .addOnFailureListener {
                         Toast.makeText(applicationContext, "통신에 실패하였습니다.", Toast.LENGTH_LONG).show()
                     }
             }
+
         }
     }
 

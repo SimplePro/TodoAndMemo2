@@ -22,6 +22,19 @@ class ChangeIdChapterTwoActivity : AppCompatActivity() {
             finish()
         }
 
+        var userPassword : String? = null
+
+        if(intent.hasExtra("password"))
+        {
+            userPassword = intent.getStringExtra("password")
+        }
+        else {
+            val intent = Intent(this, ChangeIdChapterOneActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
+
+
         changeIdEnterButtonChapterTwo.setOnClickListener {
             if(changeIdCheckEditTextChapterTwo.text.toString().trim().length < 5)
             {
@@ -33,13 +46,11 @@ class ChangeIdChapterTwoActivity : AppCompatActivity() {
                     val userId = FirebaseAuth.getInstance().currentUser!!.uid
                     val id = changeIdCheckEditTextChapterTwo.text.toString()
                     val userDocRef = FirebaseFirestore.getInstance().collection("users").document(userId)
-                    var userGetPassword : String? = null
                     var userGetEmail : String? = null
                     userDocRef.get()
-                        .addOnCompleteListener {task ->
-                            userGetPassword = task.result!!.getString("password")
-                            userGetEmail = task.result!!.getString("email")
-                            val userData = UserInstance(id, userGetPassword.toString(), userGetEmail.toString())
+                        .addOnSuccessListener {documentSnapshot ->
+                            userGetEmail = documentSnapshot.getString("email")
+                            val userData = UserInstance(id, userGetEmail.toString())
                             userDocRef.set(userData)
                                 .addOnCompleteListener { task ->
                                     if(task.isSuccessful)
@@ -49,7 +60,8 @@ class ChangeIdChapterTwoActivity : AppCompatActivity() {
                                 }
                         }
                         .addOnFailureListener {
-
+                            FirebaseAuth.getInstance().signOut()
+                            FirebaseAuth.getInstance().signInWithEmailAndPassword(userGetEmail.toString(), userPassword.toString())
                             Toast.makeText(applicationContext, "통신에 실패하였습니다. 다시 시도해주세요.", Toast.LENGTH_LONG).show()
                         }
                     val intent = Intent(this, MainActivity::class.java)
