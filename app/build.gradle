@@ -11,8 +11,8 @@ android {
         applicationId "com.simplepro.secondtodoandmemo"
         minSdkVersion 19
         targetSdkVersion 29
-        versionCode 13
-        versionName "13.0"
+        versionCode 14
+        versionName "14.0"
 
         multiDexEnabled true
 
