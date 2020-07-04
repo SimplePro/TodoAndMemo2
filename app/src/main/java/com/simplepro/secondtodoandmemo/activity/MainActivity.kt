@@ -402,6 +402,8 @@ class MainActivity : AppCompatActivity(),
         memoTitleTextDialog.setText("${memoTitleText}")
         memoContentTextDialog.setText("${memoContentText}")
 
+        memoTitleText = ""
+
 
         loop@ for(i in 0 .. memoList.size - 1) {
             if(memoList[i].memoId == memoId)
@@ -1245,7 +1247,7 @@ class MainActivity : AppCompatActivity(),
                             val userId = task.result!!.getString("id")
                             val userEmail = task.result!!.getString("email")
                             val userPassword = task.result!!.getString("password")
-                            val user = UserInstance(userId.toString(), userPassword.toString(), userEmail.toString())
+                            val user = UserInstance(userId.toString(), userEmail.toString())
                             bind
                             bind.model = NavigationViewModel(user)
                             Log.d("TAG", "userId is $userId")
