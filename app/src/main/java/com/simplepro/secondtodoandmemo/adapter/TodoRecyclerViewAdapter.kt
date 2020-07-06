@@ -2,11 +2,14 @@ package com.simplepro.secondtodoandmemo.adapter
 
 import android.content.Context
 import android.preference.PreferenceManager
+import android.renderscript.ScriptGroup
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.databinding.DataBindingUtil
+import androidx.databinding.DataBindingUtil.bind
 import androidx.recyclerview.widget.RecyclerView
 import com.simplepro.secondtodoandmemo.instance.TodoInstance
 import com.simplepro.secondtodoandmemo.R
@@ -14,8 +17,10 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
+import com.simplepro.secondtodoandmemo.viewModel.TodoViewModel
 import java.util.*
 import kotlin.collections.ArrayList
+import androidx.databinding.DataBindingUtil.getBinding as getBinding1
 
 class TodoRecyclerViewAdapter(val todoList: ArrayList<TodoInstance>, val DoneTodoList: ArrayList<TodoInstance>, private val DoneListener: todoItemClickListener, var todoSearchList : ArrayList<TodoInstance>)
     : RecyclerView.Adapter<TodoRecyclerViewAdapter.CustomViewHolder>(), Filterable {
@@ -54,7 +59,14 @@ class TodoRecyclerViewAdapter(val todoList: ArrayList<TodoInstance>, val DoneTod
                 DoneListener.todoOnItemReplaceClick(it, adapterPosition)
             }
 
-            //todoItem 의 Done(replace) 버튼이 클릭 되었을 때
+            //todoItem 의 remove 버튼이 클릭 되었을 때
+            removeButton.setOnClickListener {
+                saveTodoIdData(todoSearchList[adapterPosition].todoId)
+                //Done(remove) 버튼이 클릭 되었을 때 해당 콜백 함수를 호출함.
+                DoneListener.todoOnItemClick(it, adapterPosition)
+            }
+
+            //todoItem 의 Done(remove) 버튼이 클릭 되었을 때
             DoneButton.setOnClickListener {
                 saveTodoIdData(todoSearchList[adapterPosition].todoId)
                 for(i in 0 .. todoList.size - 1)
@@ -72,12 +84,6 @@ class TodoRecyclerViewAdapter(val todoList: ArrayList<TodoInstance>, val DoneTod
                         Log.d("TAG", "DoneTodoList[0] = ${DoneTodoList[0].todo} ${DoneTodoList[0].content} ${DoneTodoList[0].todoId}")
                     }
                 }
-                //todoList 에 해당 position 의 값을 삭제함.
-//                todoList.removeAt(adapterPosition)
-//                todoSearchList = todoList
-                //notify 로 recyclerView 에 반영함.
-//                notifyItemRemoved(adapterPosition)
-//                notifyItemChanged(adapterPosition, todoList.size)
                 //Done(remove) 버튼이 클릭 되었을 때 해당 콜백 함수를 호출함.
                 DoneListener.todoOnItemClick(it, adapterPosition)
             }
@@ -92,13 +98,22 @@ class TodoRecyclerViewAdapter(val todoList: ArrayList<TodoInstance>, val DoneTod
     //데이터를 할당함. (꾸며주는 것. text = string)
     override fun onBindViewHolder(holder: CustomViewHolder, position: Int) {
         holder.todoText.text = todoSearchList[position].todo
+//        holder.bind(todoSearchList[position])
     }
 
     //데이터를 BindViewHolder 에 넘겨주는 것
-    class CustomViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class CustomViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val todoText = itemView.findViewById<TextView>(R.id.todoListTextView)
         val DoneButton = itemView.findViewById<ImageView>(R.id.todoListDoneButton)
         val replaceButton = itemView.findViewById<ImageView>(R.id.todoListReplaceButton)
+        val removeButton = itemView.findViewById<TextView>(R.id.todoListRemoveButton)
+
+//        fun bind(to do : TodoInstance) {
+//            val view : View = LayoutInflater.from(context).inflate(R.layout.todo_list_item, null)
+//            val bindView by lazy { bind(view) }
+//            bindView
+//            bindView.model = TodoViewModel(to do)
+//        }
     }
 
     //역할 : filter 를 이용하여 리사이클러뷰에 보여줄 리스트를 조절하는 것.
