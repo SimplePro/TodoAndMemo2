@@ -1063,6 +1063,12 @@ class MainActivity : AppCompatActivity(),
                 startActivity(intent)
                 finish()
             }
+
+            R.id.trophy -> {
+                val intent = Intent(this, TrophyActivity::class.java)
+                startActivity(intent)
+                finish()
+            }
         }
         layout_drawer.closeDrawers()
         return false
