@@ -5,7 +5,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthUserCollisionException
+import com.google.firebase.firestore.FirebaseFirestore
 import com.simplepro.secondtodoandmemo.R
 import com.simplepro.secondtodoandmemo.instance.TodoInstance
 
@@ -17,7 +21,16 @@ class TrophyRecyclerViewAdapter(val trophyList: ArrayList<TodoInstance>)
         return CustomViewHolder(view)
             .apply {
                 removeButton.setOnClickListener {
+                    val trophyId = trophyList[adapterPosition].todoId
+
                     trophyList.removeAt(adapterPosition)
+                    if(FirebaseAuth.getInstance().currentUser != null)
+                    {
+                        val trophyDocRef = FirebaseFirestore.getInstance().collection("users").document(FirebaseAuth.getInstance().currentUser!!.uid)
+                        trophyDocRef.collection("DoneTodo").document(trophyId).delete().addOnSuccessListener {
+                            Toast.makeText(parent.context.applicationContext, "데이터가 삭제되었습니다.", Toast.LENGTH_LONG).show()
+                        }
+                    }
                     notifyItemRemoved(adapterPosition)
                     notifyItemChanged(adapterPosition, trophyList.size)
                 }
