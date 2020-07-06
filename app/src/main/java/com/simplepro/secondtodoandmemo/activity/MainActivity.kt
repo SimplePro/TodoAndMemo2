@@ -1415,7 +1415,6 @@ class MainActivity : AppCompatActivity(),
             todoDocRef = FirebaseFirestore.getInstance().collection("users").document(userId)
             memoDocRef = FirebaseFirestore.getInstance().collection("users").document(userId)
             doneTodoDocRef = FirebaseFirestore.getInstance().collection("users").document(userId)
-            doneTodoDocRef.collection("DoneTodo")
 
             //투두 데이터를 파이어베이스에서 가져오는 메소드를 호출함.
             bringTodoDataToFirebase()
