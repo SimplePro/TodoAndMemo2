@@ -29,4 +29,8 @@
         android:icon="@drawable/developer"
         />
 
+    <item android:id="@+id/trophy"
+        android:title="업적 보러가기"
+        android:icon="@drawable/trophy"/>
+
 </menu>
