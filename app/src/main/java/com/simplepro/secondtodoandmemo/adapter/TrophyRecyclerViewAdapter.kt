@@ -13,8 +13,12 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.simplepro.secondtodoandmemo.R
 import com.simplepro.secondtodoandmemo.instance.TodoInstance
 
-class TrophyRecyclerViewAdapter(val trophyList: ArrayList<TodoInstance>)
+class TrophyRecyclerViewAdapter(val trophyList: ArrayList<TodoInstance>, val itemRemoveOnClick : itemRemoveOnClickListener)
     : RecyclerView.Adapter<TrophyRecyclerViewAdapter.CustomViewHolder>() {
+
+    interface itemRemoveOnClickListener {
+        fun itemRemove(view : View, position: Int)
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CustomViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.memo_todo_list_item, parent, false)
@@ -33,6 +37,7 @@ class TrophyRecyclerViewAdapter(val trophyList: ArrayList<TodoInstance>)
                     }
                     notifyItemRemoved(adapterPosition)
                     notifyItemChanged(adapterPosition, trophyList.size)
+                    itemRemoveOnClick.itemRemove(it, adapterPosition)
                 }
             }
     }

@@ -16,17 +16,64 @@
         android:layout_marginTop="10dp"
         android:layout_marginLeft="5dp"/>
 
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="20dp">
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="업적"
         android:fontFamily="@font/mapo"
         android:textColor="@android:color/black"
+        android:textSize="40dp"/>
+
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/trophy"
+            android:padding="3dp"
+            android:layout_gravity="center_vertical"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        android:textSize="40dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="20dp"/>
+        android:orientation="vertical"
+        android:id="@+id/trophyLottieAnimationLayout">
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:layout_width="300dp"
+            android:layout_height="300dp"
+            app:lottie_fileName="trophy.json"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"
+            android:padding="30dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="업적이 없습니다.\n계획을 해결하여 업적으로 만들어보세요!"
+            android:fontFamily="@font/mapo"
+            android:textStyle="bold"
+            android:textColor="#777777"
+            android:textSize="15dp"
+            android:layout_gravity="center_horizontal"/>
+
+    </LinearLayout>
+
+
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/trophyRecyclerView"
