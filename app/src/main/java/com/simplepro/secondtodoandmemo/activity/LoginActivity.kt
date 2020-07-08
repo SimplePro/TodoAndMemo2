@@ -37,16 +37,19 @@ class LoginActivity : AppCompatActivity() {
         val email = emailEditTextLogin.text.toString()
         val password = passwordEditTextLogin.text.toString()
 
-        FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password).addOnCompleteListener {task ->
-            if(task.isSuccessful) {
-                moveNextPage()
-                return@addOnCompleteListener
+        if(email.isNotEmpty() && password.isNotEmpty())
+        {
+            FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password).addOnCompleteListener {task ->
+                if(task.isSuccessful) {
+                    moveNextPage()
+                    return@addOnCompleteListener
+                }
             }
+                .addOnFailureListener {
+                    Toast.makeText(this, "존재하지 않는 계정입니다.", Toast.LENGTH_LONG).show()
+                    Log.d("TAG", it.toString())
+                }
         }
-            .addOnFailureListener {
-                Toast.makeText(this, "존재하지 않는 계정입니다.", Toast.LENGTH_LONG).show()
-                Log.d("TAG", it.toString())
-            }
     }
 
     private fun moveNextPage() {
