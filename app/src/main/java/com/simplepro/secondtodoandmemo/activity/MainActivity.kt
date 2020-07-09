@@ -663,7 +663,7 @@ class MainActivity : AppCompatActivity(),
         //만일 투두리스트가 비었다면 그냥 바로 추가하기
         if(todoList.isEmpty())
         {
-            todoList.add(
+            todoList.add(0,
                 TodoInstance(
                     todoText,
                     contentText,
@@ -707,7 +707,7 @@ class MainActivity : AppCompatActivity(),
             }
             if (todoIdBoolean == false)
             {
-                todoList.add(
+                todoList.add(0,
                     TodoInstance(
                         todoText,
                         contentText,
@@ -750,7 +750,7 @@ class MainActivity : AppCompatActivity(),
                 }
                 if(todoIdBoolean == false)
                 {
-                    todoList.add(
+                    todoList.add(0,
                         TodoInstance(
                             todoText,
                             contentText,
@@ -794,7 +794,7 @@ class MainActivity : AppCompatActivity(),
                     }
                     if(todoIdBoolean == false)
                     {
-                        todoList.add(
+                        todoList.add(0,
                             TodoInstance(
                                 todoText,
                                 contentText,
@@ -1432,7 +1432,7 @@ class MainActivity : AppCompatActivity(),
         todoDocRef.collection("todo").get()
             .addOnSuccessListener {documentSnapshot ->
                 for(todoData in documentSnapshot ) {
-                    todoList.add(0, todoData.toObject(TodoInstance::class.java))
+                    todoList.add(todoData.toObject(TodoInstance::class.java))
                     Log.d("TAG", "todo is ${todoList[0].todoId} => ${todoList[0].todo}, ${todoList[0].content}")
                     //만일 todoList 의 사이즈가 1이면 GONE 으로 되는 todoLottieAnimationVisibleForm 을 true 로 바꾸어 LottieAnimationView 를 GONE 형태로 바꾸어 줘야함.
                     if(todoList.size >= 1) {
