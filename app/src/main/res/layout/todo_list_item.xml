@@ -40,6 +40,22 @@
             android:textColor="@android:color/black"
             android:textSize="20dp"/>
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toRightOf="@id/todoListTextView"
+            android:id="@+id/todoListAlarmTextView"
+            android:text="(00:00)"
+            android:fontFamily="@font/mapo"
+            android:textStyle="bold"
+            android:textColor="#777777"
+            android:textSize="12dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="2dp"
+            />
+
         <ImageView
             android:id="@+id/todoListDoneButton"
             app:layout_constraintTop_toTopOf="parent"

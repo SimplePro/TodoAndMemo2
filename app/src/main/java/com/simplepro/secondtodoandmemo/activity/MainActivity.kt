@@ -1,6 +1,11 @@
 package com.simplepro.secondtodoandmemo.activity
 
+import android.app.AlarmManager
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -33,12 +38,15 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 import com.simplepro.secondtodoandmemo.databinding.NavigationViewHeaderLayoutBinding.bind
 import com.simplepro.secondtodoandmemo.instance.UserInstance
+import com.simplepro.secondtodoandmemo.receiver.AlarmReceiver
 import com.simplepro.secondtodoandmemo.viewModel.NavigationViewModel
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.todo_add_dialog.view.*
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.ThreadLocalRandom
 import kotlin.collections.ArrayList
+import kotlin.properties.Delegates
 import kotlin.jvm.java as java
 
 class MainActivity : AppCompatActivity(),
@@ -87,6 +95,9 @@ class MainActivity : AppCompatActivity(),
 
     var todoTitleText : String = ""
     var todoContentText : String = ""
+
+    var todoHour by Delegates.notNull<Int>()
+    var todoMinute by Delegates.notNull<Int>()
 
     lateinit var OutRightSlideAnimation: Animation
     lateinit var InRightSlideAnimation: Animation
@@ -150,7 +161,9 @@ class MainActivity : AppCompatActivity(),
             //만일 이용자가 TODO를 클릭한 상태라면
             if(tabMenuBoolean == "TODO") {
                 //Dialog 띄어줌
-                todoDialogDeclaration()
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    todoDialogDeclaration()
+                }
             }
 
             //만일 사용자가 MEMO 버튼을 누른 상태라면
@@ -168,7 +181,12 @@ class MainActivity : AppCompatActivity(),
 
     }
 
-
+    //알람이 왔을 때 매인 액티비티에 있는 상태이면 notification 을 제거한다.
+    override fun onResume() {
+        super.onResume()
+        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.cancel(1234)
+    }
 
     //todoItem 이 remove 되었을 때 todoLottieAnimation 의 visibility 를 조정하는 콜백 메소드
     override fun todoOnItemClick(view: View, position: Int) {
@@ -178,6 +196,11 @@ class MainActivity : AppCompatActivity(),
         {
             if(todoList[i].todoId == todoId)
             {
+                val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+                val alarmIntent = Intent(this, AlarmReceiver::class.java)
+                val pendingIntent = PendingIntent.getBroadcast(this, todoList[i].requestCode, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                alarmManager.cancel(pendingIntent)
+                pendingIntent.cancel()
                 todoList.removeAt(i)
                 if(FirebaseAuth.getInstance().currentUser != null)
                 {
@@ -303,7 +326,24 @@ class MainActivity : AppCompatActivity(),
         }
     }
 
+    //to do 의 hour 와 minute 을 가져오기 위한 메소드.
+    private fun loadTodoHourAndMinuteData(){
+        val pref = PreferenceManager.getDefaultSharedPreferences(this)
+        val todoHourShared = pref.getInt("todoHour", 25)
+        val todoMinuteShared = pref.getInt("todoMinute", 61)
+
+        if(todoHourShared != 25)
+        {
+            todoHour = todoHourShared
+        }
+        if(todoMinuteShared != 61)
+        {
+            todoMinute = todoMinuteShared
+        }
+    }
+
     //todoItem 들의 정보를 수정해주는 콜백 메소드.
+    @RequiresApi(Build.VERSION_CODES.M)
     override fun todoOnItemReplaceClick(view: View, position: Int) {
         val dialog = AlertDialog.Builder(this)
         val edialog: LayoutInflater = LayoutInflater.from(this)
@@ -314,12 +354,21 @@ class MainActivity : AppCompatActivity(),
         val contentText = mView.findViewById<EditText>(R.id.contentEditTextDialog)
         val todoButton = mView.findViewById<Button>(R.id.todoButtonDialog)
         val cancelTodoButton = mView.findViewById<Button>(R.id.CancelTodoButtonDialog)
+        val todoAddLayout = mView.findViewById<ConstraintLayout>(R.id.todoAddLayoutDialog)
+        val todoAlarmTextView = mView.findViewById<TextView>(R.id.alarmTextDialog)
+        val todoTimePickerLayout = mView.findViewById<ConstraintLayout>(R.id.timePickerLayoutDialog)
+        val todoTimePickerAnswerButton = mView.findViewById<Button>(R.id.timePickerAnswerButtonDialog)
+        val todoTimePicker = mView.findViewById<TimePicker>(R.id.timePickerDialog)
 
         loadTodoTitleAndContentTextData()
         loadTodoIdData()
+        loadTodoHourAndMinuteData()
 
         todoText.setText(todoTitleText)
         contentText.setText(todoContentText)
+        todoAlarmTextView.setText("$todoHour:$todoMinute")
+        todoTimePicker.hour = todoHour
+        todoTimePicker.minute = todoMinute
 
         todoTitleText = ""
         todoContentText = ""
@@ -327,16 +376,46 @@ class MainActivity : AppCompatActivity(),
         builder.setView(mView)
         builder.show()
 
+        //시간 텍스트가 클릭 되었을 때
+        todoAlarmTextView.setOnClickListener {
+            todoAddLayout.visibility = View.INVISIBLE
+            todoTimePickerLayout.visibility = View.VISIBLE
+        }
+
+        //타임피커의 확인 버튼이 눌렸을 때
+        todoTimePickerAnswerButton.setOnClickListener {
+            todoTimePickerLayout.visibility = View.GONE
+            todoAddLayout.visibility = View.VISIBLE
+            todoAlarmTextView.setTextColor(Color.BLACK)
+            todoAlarmTextView.setText("${todoTimePicker.hour}:${todoTimePicker.minute}")
+        }
+
         //수정 버튼이 클릭되었을 때
         todoButton.setOnClickListener {
             for(i in 0 .. todoList.size - 1)
             {
                 if(todoList[i].todoId == todoId)
                 {
+                    todoHour = todoTimePicker.hour
+                    todoMinute = todoTimePicker.minute
+                    val calendar = Calendar.getInstance()
+                    calendar.timeInMillis = System.currentTimeMillis()
+                    calendar.set(Calendar.HOUR_OF_DAY, todoHour)
+                    calendar.set(Calendar.MINUTE, todoMinute)
+                    calendar.set(Calendar.SECOND, 0)
+                    val alarmManager : AlarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+                    val alarmIntent = Intent(this, AlarmReceiver::class.java)
+                    alarmIntent.putExtra("todoText", todoList[position].todo)
+                    val requestCode : Int = todoList[i].requestCode
+                    val pendingIntent : PendingIntent = PendingIntent.getBroadcast(this, requestCode, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                    alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
                     todoList.set(i,
                         TodoInstance(
                             todoText.text.toString(),
                             contentText.text.toString(),
+                            todoTimePicker.hour,
+                            todoTimePicker.minute,
+                            todoList[i].requestCode,
                             todoList[i].todoId
                         )
                     )
@@ -346,6 +425,9 @@ class MainActivity : AppCompatActivity(),
                         todoDocRef.set((TodoInstance(
                             todoText.text.toString(),
                             contentText.text.toString(),
+                            todoTimePicker.hour,
+                            todoTimePicker.minute,
+                            todoList[i].requestCode,
                             todoList[i].todoId
                         ))).addOnCompleteListener {
                             Log.d("TAG", "todoList replace success")
@@ -356,16 +438,6 @@ class MainActivity : AppCompatActivity(),
                 }
             }
             todoAdapter.notifyDataSetChanged()
-//            todoSearchList = todoList
-//            if(todoSearchList.isNotEmpty())
-//            {
-//                for(i in 0 .. todoSearchList.size - 1)
-//                {
-//                    Log.d("TAG", "todoSearchList[$i] - ${todoSearchList[i].to do} ${todoSearchList[i].content}")
-//                }
-//            }
-////            todoSearchList.set(position, TodoForm(todoText.text.toString(), contentText.text.toString()))
-//            todoAdapter.notifyDataSetChanged()
             builder.dismiss()
         }
 
@@ -519,7 +591,7 @@ class MainActivity : AppCompatActivity(),
     }
 
     //todoDialog 메소드
-    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
+    @RequiresApi(Build.VERSION_CODES.M)
     private fun todoDialogDeclaration() {
         val todoDialog = AlertDialog.Builder(this)
         val todoEdialog: LayoutInflater = LayoutInflater.from(this)
@@ -530,29 +602,73 @@ class MainActivity : AppCompatActivity(),
         val contentText = todoMView.findViewById<EditText>(R.id.contentEditTextDialog)
         val todoButton = todoMView.findViewById<Button>(R.id.todoButtonDialog)
         val cancelTodoButton = todoMView.findViewById<Button>(R.id.CancelTodoButtonDialog)
+        val todoAddLayout = todoMView.findViewById<ConstraintLayout>(R.id.todoAddLayoutDialog)
+        val todoAlarmTextView = todoMView.findViewById<TextView>(R.id.alarmTextDialog)
+        val todoTimePickerLayout = todoMView.findViewById<ConstraintLayout>(R.id.timePickerLayoutDialog)
+        val todoTimePickerAnswerButton = todoMView.findViewById<Button>(R.id.timePickerAnswerButtonDialog)
+        val todoTimePicker = todoMView.findViewById<TimePicker>(R.id.timePickerDialog)
+
+        //알람을 정하지 않으면 false, 정했으면 true
+        var choiceAlarmBoolean = false
+
+        val calendar = Calendar.getInstance()
+        calendar.timeInMillis = System.currentTimeMillis()
+        calendar.set(Calendar.HOUR_OF_DAY, todoTimePicker.hour)
+        calendar.set(Calendar.MINUTE, todoTimePicker.minute)
+        calendar.set(Calendar.SECOND, 0)
+
+        todoAlarmTextView.setText("${todoTimePicker.hour}:${todoTimePicker.minute}")
 
         todoBuilder.setView(todoMView)
         todoBuilder.show()
 
-        todoButton.setOnClickListener {
-            Log.d("TAG", "MainActivity.todoDialogDeclaration - todoButton is pressed")
+        //시간 텍스트가 눌렸을 때
+        todoAlarmTextView.setOnClickListener {
+            todoAddLayout.visibility = View.INVISIBLE
+            todoTimePickerLayout.visibility = View.VISIBLE
+        }
+        //타임피커의 확인 버튼이 눌렸을 때
+        todoTimePickerAnswerButton.setOnClickListener {
+            todoTimePickerLayout.visibility = View.GONE
+            todoAddLayout.visibility = View.VISIBLE
+            todoAlarmTextView.setTextColor(Color.BLACK)
+            todoAlarmTextView.setText("${todoTimePicker.hour}:${todoTimePicker.minute}")
+            choiceAlarmBoolean = true
+        }
 
-            makeTodoIdAndSaveTodoDataInServer(todoText.text.toString(), contentText.text.toString(), todoBuilder)
-            //만일 todoList의 아이템을 추가했을 때 todoList 의 사이즈가 1이면 todoLottieAnimationVisibleForm 을 true 로 바꾸어 주어 LottieAnimation 의 Visible 을 조정해주어야 함.
-            if (todoList.size == 1) {
-                todoLottieAnimationVisibleForm = true
-                if(todoRecyclerView.visibility == View.GONE)
-                {
-                    todoRecyclerView.visibility = View.VISIBLE
+        todoButton.setOnClickListener {
+            calendar.set(Calendar.HOUR_OF_DAY, todoTimePicker.hour)
+            calendar.set(Calendar.MINUTE, todoTimePicker.minute)
+            if(choiceAlarmBoolean != true)
+            {
+                Toast.makeText(applicationContext, "시간을 정해주세요", Toast.LENGTH_LONG).show()
+            }
+            else if(todoMView.todoEditTextDialog.text.toString().isNotEmpty()) {
+                makeTodoIdAndSaveTodoDataInServer(
+                    todoText.text.toString(),
+                    contentText.text.toString(),
+                    todoBuilder,
+                    todoTimePicker.hour,
+                    todoTimePicker.minute
+                )
+                //만일 todoList의 아이템을 추가했을 때 todoList 의 사이즈가 1이면 todoLottieAnimationVisibleForm 을 true 로 바꾸어 주어 LottieAnimation 의 Visible 을 조정해주어야 함.
+                if (todoList.size == 1) {
+                    todoLottieAnimationVisibleForm = true
+                    if (todoRecyclerView.visibility == View.GONE) {
+                        todoRecyclerView.visibility = View.VISIBLE
+                    }
+                }
+                //만일 todoLottieAnimationVisibleForm 이 true 이면 todoLottieAnimationView를 애니메이션고 함께 자연스럽게 GONE 으로 바꾸어 줌.
+                if (todoLottieAnimationVisibleForm == true) {
+                    todoLottieAnimationLayout.startAnimation(lottieAnimationAlphaAnimation)
+                    Handler().postDelayed({
+                        todoLottieAnimationLayout.visibility = View.GONE
+                        todoLottieAnimationVisibleForm = false
+                    }, 500)
                 }
             }
-            //만일 todoLottieAnimationVisibleForm 이 true 이면 todoLottieAnimationView를 애니메이션고 함께 자연스럽게 GONE 으로 바꾸어 줌.
-            if (todoLottieAnimationVisibleForm == true) {
-                todoLottieAnimationLayout.startAnimation(lottieAnimationAlphaAnimation)
-                Handler().postDelayed({
-                    todoLottieAnimationLayout.visibility = View.GONE
-                    todoLottieAnimationVisibleForm = false
-                }, 500)
+            else {
+                Toast.makeText(applicationContext, "할 일을 적어주세요.", Toast.LENGTH_LONG).show()
             }
         }
         //닫기 버튼이 클릭되었을 때
@@ -655,7 +771,40 @@ class MainActivity : AppCompatActivity(),
 
     //투두아이디를 생성하고 FireStore 에 투두 데이터를 저장하는 메소드.
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
-    private fun makeTodoIdAndSaveTodoDataInServer(todoText: String, contentText : String, todoBuilder: AlertDialog) {
+    private fun makeTodoIdAndSaveTodoDataInServer(todoText: String, contentText : String, todoBuilder: AlertDialog, hour : Int, minute : Int) {
+        val calendar = Calendar.getInstance()
+        calendar.timeInMillis = System.currentTimeMillis()
+        calendar.set(Calendar.HOUR_OF_DAY, hour)
+        calendar.set(Calendar.MINUTE, minute)
+        calendar.set(Calendar.SECOND, 0)
+
+        val randomUUID = UUID.randomUUID().hashCode()
+
+        val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
+        val alarmIntent = Intent(this, AlarmReceiver::class.java)
+        alarmIntent.putExtra("todoText", todoText)
+        val pendingIntent = PendingIntent.getBroadcast(this, randomUUID, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+
+        if(Build.VERSION.SDK_INT >= 23)
+        {
+            Log.d("TAG", "Build 23")
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
+            todoAdapter.notifyDataSetChanged()
+        }
+        else {
+            if(Build.VERSION.SDK_INT >= 19)
+            {
+                Log.d("TAG", "Build 19")
+                alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
+                todoAdapter.notifyDataSetChanged()
+            } else {
+                Log.d("TAG", "Build else")
+                alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
+                todoAdapter.notifyDataSetChanged()
+            }
+        }
+
         //투두 아이디 주는 것.
         todoId = ThreadLocalRandom.current().nextInt(1000000, 9999999).toString()
         Log.d("TAG", "todoId is ${todoId}")
@@ -667,6 +816,8 @@ class MainActivity : AppCompatActivity(),
                 TodoInstance(
                     todoText,
                     contentText,
+                    hour, minute,
+                    randomUUID,
                     todoId
                 )
             )
@@ -677,6 +828,8 @@ class MainActivity : AppCompatActivity(),
                     TodoInstance(
                         todoText,
                         contentText,
+                        hour, minute,
+                        randomUUID,
                         todoId
                     )
                     , SetOptions.merge()
@@ -711,6 +864,8 @@ class MainActivity : AppCompatActivity(),
                     TodoInstance(
                         todoText,
                         contentText,
+                        hour, minute,
+                        randomUUID,
                         todoId
                     )
                 )
@@ -721,6 +876,8 @@ class MainActivity : AppCompatActivity(),
                         TodoInstance(
                             todoText,
                             contentText,
+                            hour, minute,
+                            randomUUID,
                             todoId
                         )
                     , SetOptions.merge()
@@ -754,6 +911,8 @@ class MainActivity : AppCompatActivity(),
                         TodoInstance(
                             todoText,
                             contentText,
+                            hour, minute,
+                            randomUUID,
                             todoId
                         )
                     )
@@ -764,6 +923,8 @@ class MainActivity : AppCompatActivity(),
                             TodoInstance(
                                 todoText,
                                 contentText,
+                                hour, minute,
+                                randomUUID,
                                 todoId
                             )
                             , SetOptions.merge()
@@ -798,6 +959,8 @@ class MainActivity : AppCompatActivity(),
                             TodoInstance(
                                 todoText,
                                 contentText,
+                                hour, minute,
+                                randomUUID,
                                 todoId
                             )
                         )
@@ -808,6 +971,8 @@ class MainActivity : AppCompatActivity(),
                                 TodoInstance(
                                     todoText,
                                     contentText,
+                                    hour, minute,
+                                    randomUUID,
                                     todoId
                                 )
                                 , SetOptions.merge()

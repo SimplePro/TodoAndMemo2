@@ -13,4 +13,10 @@
 
     </style>
 
+    <style name="TimePickerTheme" parent="Theme.AppCompat.Light.Dialog">
+
+    <item name="colorAccent">#2A56D8</item>
+
+</style>
+
 </resources>

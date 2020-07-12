@@ -7,6 +7,7 @@
     >
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/todoAddLayoutDialog"
         android:background="@drawable/todo_add_dialog_background"
         android:layout_width="370dp"
         android:layout_height="450dp"
@@ -91,6 +92,39 @@
                 android:textColorHint="@android:color/black"
                 android:maxLength="50"
                 android:maxLines="8"
+                android:fontFamily="@font/mapo"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/alarmLinearLayoutDialog"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toBottomOf="@id/contentLinearLayoutDialog"
+            app:layout_editor_absoluteX="10dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/mapo"
+                android:text="시간 :"
+                android:textStyle="bold"
+                android:textColor="@android:color/black"
+                android:textSize="20dp"
+                />
+
+            <TextView
+                android:textSize="20dp"
+                android:textStyle="bold"
+                android:layout_marginLeft="2dp"
+                android:id="@+id/alarmTextDialog"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="00:00"
+                android:textColor="#777777"
                 android:fontFamily="@font/mapo"/>
 
         </LinearLayout>
@@ -182,6 +216,37 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:visibility="gone"
+        android:layout_width="370dp"
+        android:layout_height="450dp"
+        android:layout_centerInParent="true"
+        android:id="@+id/timePickerLayoutDialog">
+
+        <TimePicker
+            android:theme="@style/TimePickerTheme"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            android:id="@+id/timePickerDialog"
+            />
+
+        <Button
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="10dp"
+            android:layout_width="120dp"
+            android:layout_height="60dp"
+            android:id="@+id/timePickerAnswerButtonDialog"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:text="확인"
+            android:textStyle="bold"
+            android:fontFamily="@font/mapo"
+            android:textSize="20dp"
+            />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

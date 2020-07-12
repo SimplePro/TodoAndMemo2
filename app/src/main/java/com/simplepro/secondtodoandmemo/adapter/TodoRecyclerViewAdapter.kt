@@ -55,6 +55,7 @@ class TodoRecyclerViewAdapter(val todoList: ArrayList<TodoInstance>, val DoneTod
             replaceButton.setOnClickListener {
                 saveTodoTitleAndContentData(todoSearchList[adapterPosition].todo, todoSearchList[adapterPosition].content)
                 saveTodoIdData(todoSearchList[adapterPosition].todoId)
+                saveTodoHourAndMinuteData(todoSearchList[adapterPosition].hour, todoSearchList[adapterPosition].minute)
                 //변수 선언
                 DoneListener.todoOnItemReplaceClick(it, adapterPosition)
             }
@@ -98,7 +99,7 @@ class TodoRecyclerViewAdapter(val todoList: ArrayList<TodoInstance>, val DoneTod
     //데이터를 할당함. (꾸며주는 것. text = string)
     override fun onBindViewHolder(holder: CustomViewHolder, position: Int) {
         holder.todoText.text = todoSearchList[position].todo
-//        holder.bind(todoSearchList[position])
+        holder.todoAlarmText.text = "${todoSearchList[position].hour}:${todoSearchList[position].minute}"
     }
 
     //데이터를 BindViewHolder 에 넘겨주는 것
@@ -107,13 +108,7 @@ class TodoRecyclerViewAdapter(val todoList: ArrayList<TodoInstance>, val DoneTod
         val DoneButton = itemView.findViewById<ImageView>(R.id.todoListDoneButton)
         val replaceButton = itemView.findViewById<ImageView>(R.id.todoListReplaceButton)
         val removeButton = itemView.findViewById<TextView>(R.id.todoListRemoveButton)
-
-//        fun bind(to do : TodoInstance) {
-//            val view : View = LayoutInflater.from(context).inflate(R.layout.todo_list_item, null)
-//            val bindView by lazy { bind(view) }
-//            bindView
-//            bindView.model = TodoViewModel(to do)
-//        }
+        val todoAlarmText = itemView.findViewById<TextView>(R.id.todoListAlarmTextView)
     }
 
     //역할 : filter 를 이용하여 리사이클러뷰에 보여줄 리스트를 조절하는 것.
@@ -163,6 +158,17 @@ class TodoRecyclerViewAdapter(val todoList: ArrayList<TodoInstance>, val DoneTod
 
         editor
             .putString("todoId", todoId)
+            .apply()
+    }
+
+    private fun saveTodoHourAndMinuteData(todoHour : Int, todoMinute : Int)
+    {
+        val pref = PreferenceManager.getDefaultSharedPreferences(context)
+        val editor = pref.edit()
+
+        editor
+            .putInt("todoHour", todoHour)
+            .putInt("todoMinute", todoMinute)
             .apply()
     }
 
