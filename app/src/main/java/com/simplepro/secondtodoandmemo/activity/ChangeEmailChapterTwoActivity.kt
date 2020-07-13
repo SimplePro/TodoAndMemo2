@@ -59,10 +59,14 @@ class ChangeEmailChapterTwoActivity : AppCompatActivity() {
                             {
                                 val userDocRef = FirebaseFirestore.getInstance().collection("users").document(userId)
                                 var userGetId : String? = null
+                                var userGetTodoIdCount : String? = null
+                                var userGetMemoIdCount : String? = null
                                 userDocRef.get()
                                     .addOnCompleteListener {task ->
                                         userGetId = task.result!!.getString("id")
-                                        val userData = UserInstance(userGetId.toString(), email)
+                                        userGetTodoIdCount = task.result!!.getString("todoIdCount")
+                                        userGetMemoIdCount = task.result!!.getString("memoIdCount")
+                                        val userData = UserInstance(userGetId.toString(), email, userGetTodoIdCount.toString(), userGetMemoIdCount.toString())
                                         userDocRef.set(userData)
                                             .addOnCompleteListener { task ->
                                                 if(task.isSuccessful)

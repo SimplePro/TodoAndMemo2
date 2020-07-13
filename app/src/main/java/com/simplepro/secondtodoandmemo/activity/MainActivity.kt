@@ -120,6 +120,9 @@ class MainActivity : AppCompatActivity(),
     lateinit var memoId: String
     var memoIdBoolean : Boolean = false
 
+    var todoIdCount : String = ""
+    var memoIdCount : String = ""
+
 
     //역할 : 액티비티가 생성되었을 때.
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
@@ -142,6 +145,8 @@ class MainActivity : AppCompatActivity(),
         memoAdapter = MemoRecyclerViewAdapter(memoList as ArrayList<MemoInstance>, memoSearchList,this)
         todoAdapter = TodoRecyclerViewAdapter(todoList as ArrayList<TodoInstance>, DoneTodoList as ArrayList<TodoInstance>,this, todoSearchList)
 
+        //todoIdCount 와 memoIdCount 의 데이터를 가져오는 메소드를 호출함.
+        loadTodoAndMemoIdCountData()
 
         //리사이클러뷰와 어답터를 연결해주는 메소드를 호출함.
         bridgeRecyclerViewAndAdapter()
@@ -299,6 +304,73 @@ class MainActivity : AppCompatActivity(),
 
     }
 
+    //memoIdCount 를 가져오기 위한 메소드.
+    private fun loadTodoAndMemoIdCountData(){
+        if(FirebaseAuth.getInstance().currentUser != null)
+        {
+            todoDocRef = FirebaseFirestore.getInstance().collection("users").document(FirebaseAuth.getInstance().currentUser!!.uid)
+            var todoIdCountString : String? = null
+            var memoIdCountString : String? = null
+            todoDocRef.get()
+                .addOnSuccessListener {documentSnapshot ->
+                    todoIdCountString = documentSnapshot!!.getString("todoIdCount")
+                    memoIdCountString = documentSnapshot!!.getString("memoIdCount")
+                    if(todoIdCountString != null && memoIdCountString != null)
+                    {
+                        todoIdCount = todoIdCountString.toString()
+                        memoIdCount = memoIdCountString.toString()
+                    }
+                    Log.d("TAG", "todoIdCount is $todoIdCount, memoIdCount is $memoIdCount")
+                }
+                .addOnFailureListener { exception ->
+                    Log.d("TAG", "데이터 가져오기 실패 in loadTodoAndMemoIdCountData $exception")
+                }
+        }
+    }
+
+    //memoIdCount 를 저장하기 위한 메소드.
+    private fun saveTodoAndMemoIdCountData(todoIdCount : String, memoIdCount : String){
+        if(FirebaseAuth.getInstance().currentUser != null)
+        {
+            val docRef = FirebaseFirestore.getInstance().collection("users").document(FirebaseAuth.getInstance().currentUser!!.uid)
+            var userEmail : String? = null
+            var userId : String? = null
+            docRef.get()
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful)
+                    {
+                        userEmail = task.result!!.getString("email")
+                        userId = task.result!!.getString("id")
+                        if(userEmail != null && userId != null)
+                        {
+                            val user = UserInstance(userId!!, userEmail!!, todoIdCount, memoIdCount)
+                            Log.d("TAG", "user is $user")
+                            docRef.set(user)
+                                .addOnCompleteListener {task ->
+                                    if(task.isSuccessful)
+                                    {
+                                        Log.d("TAG", "데이터 저장하기 성공 in saveTodoAndMemoIdData")
+                                    }
+                                }
+                                .addOnFailureListener { exception ->
+                                    Log.d("TAG", "네트워크 연결에 실패했습니다 in saveTodoAndMemoData $exception")
+                                }
+                        }
+                    }
+                }
+//            docRef.set(
+////                UserInstance(userEmail!!, userId!!, todoIdCount.toString(), memoIdCount.toString())
+////                , SetOptions.merge()
+//            ).addOnCompleteListener {
+//                Log.d("TAG", "데이터 가져오기 성공 in loadMemoIdCountData")
+//            }
+//                .addOnFailureListener { Exception ->
+//                    Log.d("TAG", "네트워크 연결에 실패했습니다. $Exception")
+//                }
+
+        }
+    }
+
     //to do 의 타이틀과 상세내용을 가져오기 위한 메소드.
     private fun loadTodoTitleAndContentTextData(){
         val pref = PreferenceManager.getDefaultSharedPreferences(this)
@@ -405,7 +477,7 @@ class MainActivity : AppCompatActivity(),
                     calendar.set(Calendar.SECOND, 0)
                     val alarmManager : AlarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
                     val alarmIntent = Intent(this, AlarmReceiver::class.java)
-                    alarmIntent.putExtra("todoText", todoList[position].todo)
+                    alarmIntent.putExtra("todoText", todoText.text.toString())
                     val requestCode : Int = todoList[i].requestCode
                     val pendingIntent : PendingIntent = PendingIntent.getBroadcast(this, requestCode, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT)
                     alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
@@ -806,12 +878,15 @@ class MainActivity : AppCompatActivity(),
         }
 
         //투두 아이디 주는 것.
-        todoId = ThreadLocalRandom.current().nextInt(1000000, 9999999).toString()
+//        todoId = ThreadLocalRandom.current().nextInt(1000000, 9999999).toString()
+        todoIdCount = (todoIdCount.toInt() + 1).toString()
+        todoId = "$todoIdCount"
         Log.d("TAG", "todoId is ${todoId}")
+        saveTodoAndMemoIdCountData(todoIdCount, memoIdCount)
 
         //만일 투두리스트가 비었다면 그냥 바로 추가하기
-        if(todoList.isEmpty())
-        {
+//        if(todoList.isEmpty())
+//        {
             todoList.add(0,
                 TodoInstance(
                     todoText,
@@ -842,162 +917,159 @@ class MainActivity : AppCompatActivity(),
                         Log.d("TAG", "실패 $Exception")
                     }
             }
-//            todoRef.child(todoId!!).setValue(todoList).addOnCompleteListener {
-//                Toast.makeText(this, "투두리스트 저장완료", Toast.LENGTH_LONG).show()
-//            }
             Log.d("TAG", "MainActivity.todoDialogDeclaration - todoList of size : ${todoList.size}")
             todoAdapter.notifyDataSetChanged()
             todoBuilder.dismiss()
-        }
-        //만일 투두리스트가 비지 않았다면.
-        else if(todoList.isNotEmpty())
-        {
-            for(i in 0 .. todoList.size - 1)
-            {
-                if (todoList[i].todoId == todoId) {
-                    todoIdBoolean = true
-                }
-            }
-            if (todoIdBoolean == false)
-            {
-                todoList.add(0,
-                    TodoInstance(
-                        todoText,
-                        contentText,
-                        hour, minute,
-                        randomUUID,
-                        todoId
-                    )
-                )
-                if(FirebaseAuth.getInstance().currentUser != null)
-                {
-                    todoDocRef = FirebaseFirestore.getInstance().collection("users").document(FirebaseAuth.getInstance().currentUser!!.uid)
-                    todoDocRef.collection("todo").document(todoId).set(
-                        TodoInstance(
-                            todoText,
-                            contentText,
-                            hour, minute,
-                            randomUUID,
-                            todoId
-                        )
-                    , SetOptions.merge()
-                    ).addOnCompleteListener {
-                        Toast.makeText(applicationContext, "데이터가 저장되었습니다.", Toast.LENGTH_LONG).show()
-                        Log.d("TAG", "성공")
-                    }
-                        .addOnFailureListener { Exception ->
-                            Toast.makeText(applicationContext, "네트워크 연결에 실패했습니다.", Toast.LENGTH_LONG).show()
-                            Log.d("TAG", "실패 $Exception")
-                        }
-                }
-                Log.d("TAG", "MainActivity.todoDialogDeclaration - todoList of size : ${todoList.size}")
-                todoAdapter.notifyDataSetChanged()
-                todoBuilder.dismiss()
-            }
-            else if(todoIdBoolean == true)
-            {
-                todoIdBoolean = false
-                todoId = ThreadLocalRandom.current().nextInt(1000000, 9999999).toString()
-                Log.d("TAG", "todoId is ${todoId}")
-                for(i in 0 .. todoList.size - 1)
-                {
-                    if (todoList[i].todoId == todoId) {
-                        todoIdBoolean = true
-                    }
-                }
-                if(todoIdBoolean == false)
-                {
-                    todoList.add(0,
-                        TodoInstance(
-                            todoText,
-                            contentText,
-                            hour, minute,
-                            randomUUID,
-                            todoId
-                        )
-                    )
-                    if(FirebaseAuth.getInstance().currentUser != null)
-                    {
-                        todoDocRef = FirebaseFirestore.getInstance().collection("users").document(FirebaseAuth.getInstance().currentUser!!.uid)
-                        todoDocRef.collection("todo").document(todoId).set(
-                            TodoInstance(
-                                todoText,
-                                contentText,
-                                hour, minute,
-                                randomUUID,
-                                todoId
-                            )
-                            , SetOptions.merge()
-                        ).addOnCompleteListener {
-                            Toast.makeText(applicationContext, "데이터가 저장되었습니다.", Toast.LENGTH_LONG).show()
-                            Log.d("TAG", "성공")
-                        }
-                            .addOnFailureListener { Exception ->
-                                Toast.makeText(applicationContext, "네트워크 연결에 실패했습니다.", Toast.LENGTH_LONG).show()
-                                Log.d("TAG", "실패 $Exception")
-                            }
-                    }
-                    Log.d("TAG", "MainActivity.todoDialogDeclaration - todoList of size : ${todoList.size}")
-                    todoAdapter.notifyDataSetChanged()
-                    todoBuilder.dismiss()
-                    todoIdBoolean = false
-                }
-                else if(todoIdBoolean == true)
-                {
-                    todoIdBoolean = false
-                    todoId = ThreadLocalRandom.current().nextInt(1000000, 9999999).toString()
-                    Log.d("TAG", "todoId is ${todoId}")
-                    for(i in 0 .. todoList.size - 1)
-                    {
-                        if (todoList[i].todoId == todoId) {
-                            todoIdBoolean = true
-                        }
-                    }
-                    if(todoIdBoolean == false)
-                    {
-                        todoList.add(0,
-                            TodoInstance(
-                                todoText,
-                                contentText,
-                                hour, minute,
-                                randomUUID,
-                                todoId
-                            )
-                        )
-                        if(FirebaseAuth.getInstance().currentUser != null)
-                        {
-                            todoDocRef = FirebaseFirestore.getInstance().collection("users").document(FirebaseAuth.getInstance().currentUser!!.uid)
-                            todoDocRef.collection("todo").document(todoId).set(
-                                TodoInstance(
-                                    todoText,
-                                    contentText,
-                                    hour, minute,
-                                    randomUUID,
-                                    todoId
-                                )
-                                , SetOptions.merge()
-                            ).addOnCompleteListener {
-                                Toast.makeText(applicationContext, "데이터가 저장되었습니다.", Toast.LENGTH_LONG).show()
-                                Log.d("TAG", "성공")
-                            }
-                                .addOnFailureListener { Exception ->
-                                    Toast.makeText(applicationContext, "네트워크 연결에 실패했습니다.", Toast.LENGTH_LONG).show()
-                                    Log.d("TAG", "실패 $Exception")
-                                }
-                        }
-                        Log.d("TAG", "MainActivity.todoDialogDeclaration - todoList of size : ${todoList.size}")
-                        todoAdapter.notifyDataSetChanged()
-                        todoBuilder.dismiss()
-                        todoIdBoolean = false
-                    }
-                    else if(todoIdBoolean == true)
-                    {
-                        todoIdBoolean = false
-                        Toast.makeText(applicationContext, "다시 한번 시도해주세요.", Toast.LENGTH_SHORT).show()
-                    }
-                }
-            }
-        }
+//        }
+//        //만일 투두리스트가 비지 않았다면.
+//        else if(todoList.isNotEmpty())
+//        {
+//            for(i in 0 .. todoList.size - 1)
+//            {
+//                if (todoList[i].todoId == todoId) {
+//                    todoIdBoolean = true
+//                }
+//            }
+//            if (todoIdBoolean == false)
+//            {
+//                todoList.add(0,
+//                    TodoInstance(
+//                        todoText,
+//                        contentText,
+//                        hour, minute,
+//                        randomUUID,
+//                        todoId
+//                    )
+//                )
+//                if(FirebaseAuth.getInstance().currentUser != null)
+//                {
+//                    todoDocRef = FirebaseFirestore.getInstance().collection("users").document(FirebaseAuth.getInstance().currentUser!!.uid)
+//                    todoDocRef.collection("todo").document(todoId).set(
+//                        TodoInstance(
+//                            todoText,
+//                            contentText,
+//                            hour, minute,
+//                            randomUUID,
+//                            todoId
+//                        )
+//                    , SetOptions.merge()
+//                    ).addOnCompleteListener {
+//                        Toast.makeText(applicationContext, "데이터가 저장되었습니다.", Toast.LENGTH_LONG).show()
+//                        Log.d("TAG", "성공")
+//                    }
+//                        .addOnFailureListener { Exception ->
+//                            Toast.makeText(applicationContext, "네트워크 연결에 실패했습니다.", Toast.LENGTH_LONG).show()
+//                            Log.d("TAG", "실패 $Exception")
+//                        }
+//                }
+//                Log.d("TAG", "MainActivity.todoDialogDeclaration - todoList of size : ${todoList.size}")
+//                todoAdapter.notifyDataSetChanged()
+//                todoBuilder.dismiss()
+//            }
+//            else if(todoIdBoolean == true)
+//            {
+//                todoIdBoolean = false
+//                todoId = ThreadLocalRandom.current().nextInt(1000000, 9999999).toString()
+//                Log.d("TAG", "todoId is ${todoId}")
+//                for(i in 0 .. todoList.size - 1)
+//                {
+//                    if (todoList[i].todoId == todoId) {
+//                        todoIdBoolean = true
+//                    }
+//                }
+//                if(todoIdBoolean == false)
+//                {
+//                    todoList.add(0,
+//                        TodoInstance(
+//                            todoText,
+//                            contentText,
+//                            hour, minute,
+//                            randomUUID,
+//                            todoId
+//                        )
+//                    )
+//                    if(FirebaseAuth.getInstance().currentUser != null)
+//                    {
+//                        todoDocRef = FirebaseFirestore.getInstance().collection("users").document(FirebaseAuth.getInstance().currentUser!!.uid)
+//                        todoDocRef.collection("todo").document(todoId).set(
+//                            TodoInstance(
+//                                todoText,
+//                                contentText,
+//                                hour, minute,
+//                                randomUUID,
+//                                todoId
+//                            )
+//                            , SetOptions.merge()
+//                        ).addOnCompleteListener {
+//                            Toast.makeText(applicationContext, "데이터가 저장되었습니다.", Toast.LENGTH_LONG).show()
+//                            Log.d("TAG", "성공")
+//                        }
+//                            .addOnFailureListener { Exception ->
+//                                Toast.makeText(applicationContext, "네트워크 연결에 실패했습니다.", Toast.LENGTH_LONG).show()
+//                                Log.d("TAG", "실패 $Exception")
+//                            }
+//                    }
+//                    Log.d("TAG", "MainActivity.todoDialogDeclaration - todoList of size : ${todoList.size}")
+//                    todoAdapter.notifyDataSetChanged()
+//                    todoBuilder.dismiss()
+//                    todoIdBoolean = false
+//                }
+//                else if(todoIdBoolean == true)
+//                {
+//                    todoIdBoolean = false
+//                    todoId = ThreadLocalRandom.current().nextInt(1000000, 9999999).toString()
+//                    Log.d("TAG", "todoId is ${todoId}")
+//                    for(i in 0 .. todoList.size - 1)
+//                    {
+//                        if (todoList[i].todoId == todoId) {
+//                            todoIdBoolean = true
+//                        }
+//                    }
+//                    if(todoIdBoolean == false)
+//                    {
+//                        todoList.add(0,
+//                            TodoInstance(
+//                                todoText,
+//                                contentText,
+//                                hour, minute,
+//                                randomUUID,
+//                                todoId
+//                            )
+//                        )
+//                        if(FirebaseAuth.getInstance().currentUser != null)
+//                        {
+//                            todoDocRef = FirebaseFirestore.getInstance().collection("users").document(FirebaseAuth.getInstance().currentUser!!.uid)
+//                            todoDocRef.collection("todo").document(todoId).set(
+//                                TodoInstance(
+//                                    todoText,
+//                                    contentText,
+//                                    hour, minute,
+//                                    randomUUID,
+//                                    todoId
+//                                )
+//                                , SetOptions.merge()
+//                            ).addOnCompleteListener {
+//                                Toast.makeText(applicationContext, "데이터가 저장되었습니다.", Toast.LENGTH_LONG).show()
+//                                Log.d("TAG", "성공")
+//                            }
+//                                .addOnFailureListener { Exception ->
+//                                    Toast.makeText(applicationContext, "네트워크 연결에 실패했습니다.", Toast.LENGTH_LONG).show()
+//                                    Log.d("TAG", "실패 $Exception")
+//                                }
+//                        }
+//                        Log.d("TAG", "MainActivity.todoDialogDeclaration - todoList of size : ${todoList.size}")
+//                        todoAdapter.notifyDataSetChanged()
+//                        todoBuilder.dismiss()
+//                        todoIdBoolean = false
+//                    }
+//                    else if(todoIdBoolean == true)
+//                    {
+//                        todoIdBoolean = false
+//                        Toast.makeText(applicationContext, "다시 한번 시도해주세요.", Toast.LENGTH_SHORT).show()
+//                    }
+//                }
+//            }
+//        }
     }
 
     //메모아이디를 생성하는 FireStore 에 메모 데이터를 저장하는 메소드.
@@ -1005,11 +1077,14 @@ class MainActivity : AppCompatActivity(),
     private fun makeMemoIdAndSaveMemoDataInServer(memoTitle: String, memoContent: String, date: String, memoPlan: String, memoBuilder: AlertDialog) {
 
         //메모 아이디 주는 것.
-        memoId = ThreadLocalRandom.current().nextInt(1000000, 9999999).toString()
+        memoIdCount = (memoIdCount.toInt() + 1).toString()
+        memoId = memoIdCount
+        saveTodoAndMemoIdCountData(todoIdCount, memoIdCount)
+//        memoId = ThreadLocalRandom.current().nextInt(1000000, 9999999).toString()
         Log.d("TAG", "memoId is ${memoId}")
         //만일 메모리스트가 비었다면 그냥 바로 추가하기
-        if(memoList.isEmpty())
-        {
+//        if(memoList.isEmpty())
+//        {
             memoList.add(0, MemoInstance(memoTitle, memoContent, date, "${memoPlan}", memoId)
             )
             //firestore 에 저장하는 단계
@@ -1029,157 +1104,157 @@ class MainActivity : AppCompatActivity(),
             Log.d("TAG", "MainActivity.memoDialogDeclaration - memoList of size : ${memoList.size}")
             memoAdapter.notifyDataSetChanged()
             memoBuilder.dismiss()
-        }
-        //만일 메모리스트가 비지 않았다면.
-        else if(memoList.isNotEmpty())
-        {
-            for(i in 0 .. memoList.size - 1)
-            {
-                if (memoList[i].memoId == memoId) {
-                    memoIdBoolean = true
-                }
-            }
-            if (memoIdBoolean == false)
-            {
-                memoList.add(0,
-                    MemoInstance(
-                        memoTitle,
-                        memoContent,
-                        date,
-                        "${memoPlan}",
-                        memoId
-                    )
-                )
-                //firestore 에 저장하는 단계
-                if(FirebaseAuth.getInstance().currentUser != null)
-                {
-                    memoDocRef = FirebaseFirestore.getInstance().collection("users").document(FirebaseAuth.getInstance().currentUser!!.uid)
-                    memoDocRef.collection("memo").document(memoId).set(
-                        MemoInstance(
-                            memoTitle,
-                            memoContent,
-                            date,
-                            memoPlan,
-                            memoId
-                        )
-                        , SetOptions.merge()
-                    ).addOnCompleteListener {
-                        Toast.makeText(applicationContext, "데이터가 저장되었습니다.", Toast.LENGTH_LONG).show()
-                        Log.d("TAG", "성공")
-                    }
-                        .addOnFailureListener { Exception ->
-                            Toast.makeText(applicationContext, "네트워크 연결에 실패했습니다.", Toast.LENGTH_LONG).show()
-                            Log.d("TAG", "실패 $Exception")
-                        }
-                }
-                Log.d("TAG", "MainActivity.memoDialogDeclaration - memoList of size : ${memoList.size}")
-                memoAdapter.notifyDataSetChanged()
-                memoBuilder.dismiss()
-            }
-            else if(memoIdBoolean == true)
-            {
-                memoIdBoolean = false
-                memoId = ThreadLocalRandom.current().nextInt(1000000, 9999999).toString()
-                Log.d("TAG", "memoId is ${memoId}")
-                for(i in 0 .. memoList.size - 1)
-                {
-                    if (memoList[i].memoId == memoId) {
-                        memoIdBoolean = true
-                    }
-                }
-                if(memoIdBoolean == false)
-                {
-                    memoList.add(0,
-                        MemoInstance(
-                            memoTitle,
-                            memoContent,
-                            date,
-                            "${memoPlan}",
-                            memoId
-                        )
-                    )
-                    //firestore 에 저장하는 단계
-                    if(FirebaseAuth.getInstance().currentUser != null)
-                    {
-                        memoDocRef = FirebaseFirestore.getInstance().collection("users").document(FirebaseAuth.getInstance().currentUser!!.uid)
-                        memoDocRef.collection("memo").document(memoId).set(
-                            MemoInstance(
-                                memoTitle,
-                                memoContent,
-                                date,
-                                memoPlan,
-                                memoId
-                            )
-                            , SetOptions.merge()
-                        ).addOnCompleteListener {
-                            Toast.makeText(applicationContext, "데이터가 저장되었습니다.", Toast.LENGTH_LONG).show()
-                            Log.d("TAG", "성공")
-                        }
-                            .addOnFailureListener { Exception ->
-                                Toast.makeText(applicationContext, "네트워크 연결에 실패했습니다.", Toast.LENGTH_LONG).show()
-                                Log.d("TAG", "실패 $Exception")
-                            }
-                    }
-                    Log.d("TAG", "MainActivity.memoDialogDeclaration - memoList of size : ${memoList.size}")
-                    memoAdapter.notifyDataSetChanged()
-                    memoBuilder.dismiss()
-                }
-                else if(memoIdBoolean == true)
-                {
-                    memoIdBoolean = false
-                    memoId = ThreadLocalRandom.current().nextInt(1000000, 9999999).toString()
-                    Log.d("TAG", "memoId is ${memoId}")
-                    for(i in 0 .. memoList.size - 1)
-                    {
-                        if (memoList[i].memoId == memoId) {
-                            memoIdBoolean = true
-                        }
-                    }
-                    if(memoIdBoolean == false)
-                    {
-                        memoList.add(0,
-                            MemoInstance(
-                                memoTitle,
-                                memoContent,
-                                date,
-                                "${memoPlan}",
-                                memoId
-                            )
-                        )
-                        //firestore 에 저장하는 단계
-                        if(FirebaseAuth.getInstance().currentUser != null)
-                        {
-                            memoDocRef = FirebaseFirestore.getInstance().collection("users").document(FirebaseAuth.getInstance().currentUser!!.uid)
-                            memoDocRef.collection("memo").document(memoId).set(
-                                MemoInstance(
-                                    memoTitle,
-                                    memoContent,
-                                    date,
-                                    memoPlan,
-                                    memoId
-                                )
-                                , SetOptions.merge()
-                            ).addOnCompleteListener {
-                                Toast.makeText(applicationContext, "데이터가 저장되었습니다.", Toast.LENGTH_LONG).show()
-                                Log.d("TAG", "성공")
-                            }
-                                .addOnFailureListener { Exception ->
-                                    Toast.makeText(applicationContext, "네트워크 연결에 실패했습니다.", Toast.LENGTH_LONG).show()
-                                    Log.d("TAG", "실패 $Exception")
-                                }
-                        }
-                        Log.d("TAG", "MainActivity.memoDialogDeclaration - memoList of size : ${memoList.size}")
-                        memoAdapter.notifyDataSetChanged()
-                        memoBuilder.dismiss()
-                    }
-                    else if(memoIdBoolean == true)
-                    {
-                        memoIdBoolean = false
-                        Toast.makeText(applicationContext, "다시 한번 시도해주세요.", Toast.LENGTH_SHORT).show()
-                    }
-                }
-            }
-        }
+//        }
+//        //만일 메모리스트가 비지 않았다면.
+//        else if(memoList.isNotEmpty())
+//        {
+//            for(i in 0 .. memoList.size - 1)
+//            {
+//                if (memoList[i].memoId == memoId) {
+//                    memoIdBoolean = true
+//                }
+//            }
+//            if (memoIdBoolean == false)
+//            {
+//                memoList.add(0,
+//                    MemoInstance(
+//                        memoTitle,
+//                        memoContent,
+//                        date,
+//                        "${memoPlan}",
+//                        memoId
+//                    )
+//                )
+//                //firestore 에 저장하는 단계
+//                if(FirebaseAuth.getInstance().currentUser != null)
+//                {
+//                    memoDocRef = FirebaseFirestore.getInstance().collection("users").document(FirebaseAuth.getInstance().currentUser!!.uid)
+//                    memoDocRef.collection("memo").document(memoId).set(
+//                        MemoInstance(
+//                            memoTitle,
+//                            memoContent,
+//                            date,
+//                            memoPlan,
+//                            memoId
+//                        )
+//                        , SetOptions.merge()
+//                    ).addOnCompleteListener {
+//                        Toast.makeText(applicationContext, "데이터가 저장되었습니다.", Toast.LENGTH_LONG).show()
+//                        Log.d("TAG", "성공")
+//                    }
+//                        .addOnFailureListener { Exception ->
+//                            Toast.makeText(applicationContext, "네트워크 연결에 실패했습니다.", Toast.LENGTH_LONG).show()
+//                            Log.d("TAG", "실패 $Exception")
+//                        }
+//                }
+//                Log.d("TAG", "MainActivity.memoDialogDeclaration - memoList of size : ${memoList.size}")
+//                memoAdapter.notifyDataSetChanged()
+//                memoBuilder.dismiss()
+//            }
+//            else if(memoIdBoolean == true)
+//            {
+//                memoIdBoolean = false
+//                memoId = ThreadLocalRandom.current().nextInt(1000000, 9999999).toString()
+//                Log.d("TAG", "memoId is ${memoId}")
+//                for(i in 0 .. memoList.size - 1)
+//                {
+//                    if (memoList[i].memoId == memoId) {
+//                        memoIdBoolean = true
+//                    }
+//                }
+//                if(memoIdBoolean == false)
+//                {
+//                    memoList.add(0,
+//                        MemoInstance(
+//                            memoTitle,
+//                            memoContent,
+//                            date,
+//                            "${memoPlan}",
+//                            memoId
+//                        )
+//                    )
+//                    //firestore 에 저장하는 단계
+//                    if(FirebaseAuth.getInstance().currentUser != null)
+//                    {
+//                        memoDocRef = FirebaseFirestore.getInstance().collection("users").document(FirebaseAuth.getInstance().currentUser!!.uid)
+//                        memoDocRef.collection("memo").document(memoId).set(
+//                            MemoInstance(
+//                                memoTitle,
+//                                memoContent,
+//                                date,
+//                                memoPlan,
+//                                memoId
+//                            )
+//                            , SetOptions.merge()
+//                        ).addOnCompleteListener {
+//                            Toast.makeText(applicationContext, "데이터가 저장되었습니다.", Toast.LENGTH_LONG).show()
+//                            Log.d("TAG", "성공")
+//                        }
+//                            .addOnFailureListener { Exception ->
+//                                Toast.makeText(applicationContext, "네트워크 연결에 실패했습니다.", Toast.LENGTH_LONG).show()
+//                                Log.d("TAG", "실패 $Exception")
+//                            }
+//                    }
+//                    Log.d("TAG", "MainActivity.memoDialogDeclaration - memoList of size : ${memoList.size}")
+//                    memoAdapter.notifyDataSetChanged()
+//                    memoBuilder.dismiss()
+//                }
+//                else if(memoIdBoolean == true)
+//                {
+//                    memoIdBoolean = false
+//                    memoId = ThreadLocalRandom.current().nextInt(1000000, 9999999).toString()
+//                    Log.d("TAG", "memoId is ${memoId}")
+//                    for(i in 0 .. memoList.size - 1)
+//                    {
+//                        if (memoList[i].memoId == memoId) {
+//                            memoIdBoolean = true
+//                        }
+//                    }
+//                    if(memoIdBoolean == false)
+//                    {
+//                        memoList.add(0,
+//                            MemoInstance(
+//                                memoTitle,
+//                                memoContent,
+//                                date,
+//                                "${memoPlan}",
+//                                memoId
+//                            )
+//                        )
+//                        //firestore 에 저장하는 단계
+//                        if(FirebaseAuth.getInstance().currentUser != null)
+//                        {
+//                            memoDocRef = FirebaseFirestore.getInstance().collection("users").document(FirebaseAuth.getInstance().currentUser!!.uid)
+//                            memoDocRef.collection("memo").document(memoId).set(
+//                                MemoInstance(
+//                                    memoTitle,
+//                                    memoContent,
+//                                    date,
+//                                    memoPlan,
+//                                    memoId
+//                                )
+//                                , SetOptions.merge()
+//                            ).addOnCompleteListener {
+//                                Toast.makeText(applicationContext, "데이터가 저장되었습니다.", Toast.LENGTH_LONG).show()
+//                                Log.d("TAG", "성공")
+//                            }
+//                                .addOnFailureListener { Exception ->
+//                                    Toast.makeText(applicationContext, "네트워크 연결에 실패했습니다.", Toast.LENGTH_LONG).show()
+//                                    Log.d("TAG", "실패 $Exception")
+//                                }
+//                        }
+//                        Log.d("TAG", "MainActivity.memoDialogDeclaration - memoList of size : ${memoList.size}")
+//                        memoAdapter.notifyDataSetChanged()
+//                        memoBuilder.dismiss()
+//                    }
+//                    else if(memoIdBoolean == true)
+//                    {
+//                        memoIdBoolean = false
+//                        Toast.makeText(applicationContext, "다시 한번 시도해주세요.", Toast.LENGTH_SHORT).show()
+//                    }
+//                }
+//            }
+//        }
     }
 
     //navigationView
@@ -1417,7 +1492,6 @@ class MainActivity : AppCompatActivity(),
                             Log.d("TAG", "데이터 가져오기 성공")
                             val userId = task.result!!.getString("id")
                             val userEmail = task.result!!.getString("email")
-                            val userPassword = task.result!!.getString("password")
                             val user = UserInstance(userId.toString(), userEmail.toString())
                             bind
                             bind.model = NavigationViewModel(user)
@@ -1597,7 +1671,7 @@ class MainActivity : AppCompatActivity(),
         todoDocRef.collection("todo").get()
             .addOnSuccessListener {documentSnapshot ->
                 for(todoData in documentSnapshot ) {
-                    todoList.add(todoData.toObject(TodoInstance::class.java))
+                    todoList.add(0, todoData.toObject(TodoInstance::class.java))
                     Log.d("TAG", "todo is ${todoList[0].todoId} => ${todoList[0].todo}, ${todoList[0].content}")
                     //만일 todoList 의 사이즈가 1이면 GONE 으로 되는 todoLottieAnimationVisibleForm 을 true 로 바꾸어 LottieAnimationView 를 GONE 형태로 바꾸어 줘야함.
                     if(todoList.size >= 1) {
