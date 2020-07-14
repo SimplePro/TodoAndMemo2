@@ -122,6 +122,9 @@ class MainActivity : AppCompatActivity(),
 
     var todoIdCount : String = ""
     var memoIdCount : String = ""
+    
+    var staticUserId : String? = null
+    var staticUserEmail : String? = null
 
 
     //역할 : 액티비티가 생성되었을 때.
@@ -333,41 +336,21 @@ class MainActivity : AppCompatActivity(),
         if(FirebaseAuth.getInstance().currentUser != null)
         {
             val docRef = FirebaseFirestore.getInstance().collection("users").document(FirebaseAuth.getInstance().currentUser!!.uid)
-            var userEmail : String? = null
-            var userId : String? = null
-            docRef.get()
-                .addOnCompleteListener { task ->
-                    if (task.isSuccessful)
-                    {
-                        userEmail = task.result!!.getString("email")
-                        userId = task.result!!.getString("id")
-                        if(userEmail != null && userId != null)
+            if(staticUserEmail != null && staticUserId != null)
+            {
+                val user = UserInstance(staticUserId!!, staticUserEmail!!, todoIdCount, memoIdCount)
+                Log.d("TAG", "user is $user")
+                docRef.set(user)
+                    .addOnCompleteListener {task ->
+                        if(task.isSuccessful)
                         {
-                            val user = UserInstance(userId!!, userEmail!!, todoIdCount, memoIdCount)
-                            Log.d("TAG", "user is $user")
-                            docRef.set(user)
-                                .addOnCompleteListener {task ->
-                                    if(task.isSuccessful)
-                                    {
-                                        Log.d("TAG", "데이터 저장하기 성공 in saveTodoAndMemoIdData")
-                                    }
-                                }
-                                .addOnFailureListener { exception ->
-                                    Log.d("TAG", "네트워크 연결에 실패했습니다 in saveTodoAndMemoData $exception")
-                                }
+                            Log.d("TAG", "데이터 저장하기 성공 in saveTodoAndMemoIdData")
                         }
                     }
-                }
-//            docRef.set(
-////                UserInstance(userEmail!!, userId!!, todoIdCount.toString(), memoIdCount.toString())
-////                , SetOptions.merge()
-//            ).addOnCompleteListener {
-//                Log.d("TAG", "데이터 가져오기 성공 in loadMemoIdCountData")
-//            }
-//                .addOnFailureListener { Exception ->
-//                    Log.d("TAG", "네트워크 연결에 실패했습니다. $Exception")
-//                }
-
+                    .addOnFailureListener { exception ->
+                        Log.d("TAG", "네트워크 연결에 실패했습니다 in saveTodoAndMemoData $exception")
+                    }
+            }
         }
     }
 
@@ -1185,6 +1168,8 @@ class MainActivity : AppCompatActivity(),
                             Log.d("TAG", "데이터 가져오기 성공")
                             val userId = task.result!!.getString("id")
                             val userEmail = task.result!!.getString("email")
+                            staticUserId = userId
+                            staticUserEmail = userEmail
                             val user = UserInstance(userId.toString(), userEmail.toString())
                             bind
                             bind.model = NavigationViewModel(user)
