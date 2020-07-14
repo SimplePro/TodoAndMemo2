@@ -47,10 +47,14 @@ class ChangeIdChapterTwoActivity : AppCompatActivity() {
                     val id = changeIdCheckEditTextChapterTwo.text.toString()
                     val userDocRef = FirebaseFirestore.getInstance().collection("users").document(userId)
                     var userGetEmail : String? = null
+                    var userGetTodoIdCount : String? = null
+                    var userGetMemoIdCount : String? = null
                     userDocRef.get()
                         .addOnSuccessListener {documentSnapshot ->
                             userGetEmail = documentSnapshot.getString("email")
-                            val userData = UserInstance(id, userGetEmail.toString())
+                            userGetTodoIdCount = documentSnapshot.getString("todoIdCount")
+                            userGetMemoIdCount = documentSnapshot.getString("memoIdCount")
+                            val userData = UserInstance(id, userGetEmail.toString(), userGetTodoIdCount.toString(), userGetMemoIdCount.toString())
                             userDocRef.set(userData)
                                 .addOnCompleteListener { task ->
                                     if(task.isSuccessful)
