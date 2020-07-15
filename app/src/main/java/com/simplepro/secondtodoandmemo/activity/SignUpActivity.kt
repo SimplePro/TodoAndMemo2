@@ -126,20 +126,6 @@ class SignUpActivity : AppCompatActivity() {
                     Log.d("TAG", it.toString())
                 }
         }
-
-//        val id = idEditTextSignUp.text.toString()
-
-//        if(FirebaseAuth.getInstance().currentUser != null)
-//        {
-////            val idData = hashMapOf("id" to id)
-//
-//            val idData = mapOf("id" to id)
-//
-//            authUid = FirebaseAuth.getInstance().currentUser!!.uid
-//            docRef = FirebaseFirestore.getInstance().collection("users").document(authUid)
-//            docRef.set(idData, SetOptions.merge())
-//        }
-
     }
 
     private fun moveNextPage() {
@@ -167,23 +153,5 @@ class SignUpActivity : AppCompatActivity() {
             finish()
         }
     }
-//    filter : InputFilter = InputFilter() {
-//        public CharSequence filter(CharSequence source, int start, int end,
-//            Spanned dest, int dstart, int dend)
-//        {
-//            for (int i = start; i < end; i++) {
-//            if (!isEnglishOrHebrew(source.charAt(i))) {
-//                return "";
-//            }
-//        }
-//            return null;
-//        }
-//
-//        private boolean isEnglishOrHebrew(char c) {
-//            . . .
-//        }
-//    };
-//
-//    edit.setFilters(new InputFilter[]{filter});
 
 }

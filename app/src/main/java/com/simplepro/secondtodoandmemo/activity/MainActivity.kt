@@ -120,8 +120,8 @@ class MainActivity : AppCompatActivity(),
     lateinit var memoId: String
     var memoIdBoolean : Boolean = false
 
-    var todoIdCount : String = ""
-    var memoIdCount : String = ""
+    var todoIdCount : String = "0"
+    var memoIdCount : String = "0"
     
     var staticUserId : String? = null
     var staticUserEmail : String? = null
@@ -150,6 +150,7 @@ class MainActivity : AppCompatActivity(),
 
         //todoIdCount 와 memoIdCount 의 데이터를 가져오는 메소드를 호출함.
         loadTodoAndMemoIdCountData()
+
 
         //리사이클러뷰와 어답터를 연결해주는 메소드를 호출함.
         bridgeRecyclerViewAndAdapter()
@@ -309,6 +310,7 @@ class MainActivity : AppCompatActivity(),
 
     //memoIdCount 를 가져오기 위한 메소드.
     private fun loadTodoAndMemoIdCountData(){
+        Log.d("TAG", "loadTodoAndMemoIdCountData")
         if(FirebaseAuth.getInstance().currentUser != null)
         {
             todoDocRef = FirebaseFirestore.getInstance().collection("users").document(FirebaseAuth.getInstance().currentUser!!.uid)
@@ -320,8 +322,14 @@ class MainActivity : AppCompatActivity(),
                     memoIdCountString = documentSnapshot!!.getString("memoIdCount")
                     if(todoIdCountString != null && memoIdCountString != null)
                     {
-                        todoIdCount = todoIdCountString.toString()
-                        memoIdCount = memoIdCountString.toString()
+                        if(todoIdCountString != "0")
+                        {
+                            todoIdCount = todoIdCountString.toString()
+                        }
+                        if(memoIdCountString != "0")
+                        {
+                            memoIdCount = memoIdCountString.toString()
+                        }
                     }
                     Log.d("TAG", "todoIdCount is $todoIdCount, memoIdCount is $memoIdCount")
                 }
@@ -345,10 +353,12 @@ class MainActivity : AppCompatActivity(),
                         if(task.isSuccessful)
                         {
                             Log.d("TAG", "데이터 저장하기 성공 in saveTodoAndMemoIdData")
+                            Toast.makeText(applicationContext, "user 데이터 저장하기 성공", Toast.LENGTH_LONG).show()
                         }
                     }
                     .addOnFailureListener { exception ->
                         Log.d("TAG", "네트워크 연결에 실패했습니다 in saveTodoAndMemoData $exception")
+                        Toast.makeText(applicationContext, "네트워크 연결에 실패했습니다.", Toast.LENGTH_LONG).show()
                     }
             }
         }
