@@ -7,10 +7,28 @@
     tools:context=".activity.IntroActivity">
 
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="SimplePro"
-        android:textSize="50dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="World To Innovation"
+        app:layout_constraintBottom_toTopOf="@id/introTitle"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:fontFamily="@font/mapo"
+        android:textColor="@android:color/black"
+        android:textStyle="bold"
+        android:layout_marginRight="70dp"
+        android:textSize="20dp"/>
+
+    <TextView
+        android:id="@+id/introTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:text="Wotin"
+        android:textSize="60dp"
         android:textStyle="bold"
         android:fontFamily="@font/mapo"
         android:textColor="@android:color/black"
