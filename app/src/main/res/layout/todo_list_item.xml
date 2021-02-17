@@ -8,7 +8,7 @@
 
         <variable
             name="model"
-            type="com.simplepro.secondtodoandmemo.viewModel.TodoViewModel" />
+            type="com.simplepro.onlinetodoandmemo.viewModel.TodoViewModel" />
 
     </data>
 

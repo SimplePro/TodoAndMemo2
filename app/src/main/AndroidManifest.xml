@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.simplepro.secondtodoandmemo">
+    package="com.simplepro.onlinetodoandmemo">
 
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -11,7 +11,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-        <activity android:name=".activity.TrophyActivity"></activity>
+        <activity android:name=".activity.TrophyActivity"/>
         <activity android:name=".activity.ChangeEmailChapterTwoActivity" />
         <activity android:name=".activity.ChangeEmailChapterOneActivity" />
         <activity android:name=".activity.ChangeIdChapterTwoActivity" />

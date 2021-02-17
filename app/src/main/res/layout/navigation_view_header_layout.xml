@@ -8,7 +8,7 @@
         
         <variable
             name="model"
-            type="com.simplepro.secondtodoandmemo.viewModel.NavigationViewModel" />
+            type="com.simplepro.onlinetodoandmemo.viewModel.NavigationViewModel" />
         
     </data>
 

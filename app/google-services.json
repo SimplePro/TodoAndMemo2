@@ -10,7 +10,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:387397503134:android:5c6da6427dfb90dc6f938f",
         "android_client_info": {
-          "package_name": "com.simplepro.secondtodoandmemo"
+          "package_name": "com.simplepro.onlinetodoandmemo"
         }
       },
       "oauth_client": [
@@ -39,7 +39,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:387397503134:android:f4445d8e530d1aa56f938f",
         "android_client_info": {
-          "package_name": "com.example.todoandmemo2"
+          "package_name": "com.simplepro.onlinetodoandmemo"
         }
       },
       "oauth_client": [
@@ -47,7 +47,7 @@
           "client_id": "387397503134-3vkmd01p349r59fo728cagchqkhjcc23.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.example.todoandmemo2",
+            "package_name": "com.simplepro.onlinetodoandmemo",
             "certificate_hash": "f21be6eb1df4b4229d15e9837db9c91af4bcae2e"
           }
         },
