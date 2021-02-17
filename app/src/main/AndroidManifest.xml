@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.simplepro.onlinetodoandmemo">
+    package="com.simplepro.secondtodoandmemo">
 
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -11,18 +11,18 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-        <activity android:name=".activity.TrophyActivity"/>
-        <activity android:name=".activity.ChangeEmailChapterTwoActivity" />
-        <activity android:name=".activity.ChangeEmailChapterOneActivity" />
-        <activity android:name=".activity.ChangeIdChapterTwoActivity" />
-        <activity android:name=".activity.ChangeIdChapterOneActivity" />
-        <activity android:name=".activity.IntroduceDeveloperActivity" />
-        <activity android:name=".activity.SecessionActivity" />
-        <activity android:name=".activity.ChangePasswordChapterTwoActivity" />
-        <activity android:name=".activity.ChangePasswordChapterOneActivity" />
-        <activity android:name=".activity.SignUpActivity" />
-        <activity android:name=".activity.LoginActivity" />
-        <activity android:name=".activity.IntroActivity">
+        <activity android:name="com.simplepro.secondtodoandmemo.activity.TrophyActivity"/>
+        <activity android:name="com.simplepro.secondtodoandmemo.activity.ChangeEmailChapterTwoActivity" />
+        <activity android:name="com.simplepro.secondtodoandmemo.activity.ChangeEmailChapterOneActivity" />
+        <activity android:name="com.simplepro.secondtodoandmemo.activity.ChangeIdChapterTwoActivity" />
+        <activity android:name="com.simplepro.secondtodoandmemo.activity.ChangeIdChapterOneActivity" />
+        <activity android:name="com.simplepro.secondtodoandmemo.activity.IntroduceDeveloperActivity" />
+        <activity android:name="com.simplepro.secondtodoandmemo.activity.SecessionActivity" />
+        <activity android:name="com.simplepro.secondtodoandmemo.activity.ChangePasswordChapterTwoActivity" />
+        <activity android:name="com.simplepro.secondtodoandmemo.activity.ChangePasswordChapterOneActivity" />
+        <activity android:name="com.simplepro.secondtodoandmemo.activity.SignUpActivity" />
+        <activity android:name="com.simplepro.secondtodoandmemo.activity.LoginActivity" />
+        <activity android:name="com.simplepro.secondtodoandmemo.activity.IntroActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -30,12 +30,12 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activity.MainActivity"
+            android:name="com.simplepro.secondtodoandmemo.activity.MainActivity"
             android:windowSoftInputMode="adjustNothing"
             android:launchMode="singleTask"
             />
         
-        <receiver android:name=".receiver.AlarmReceiver"/>
+        <receiver android:name="com.simplepro.secondtodoandmemo.receiver.AlarmReceiver"/>
     </application>
 
 </manifest>
